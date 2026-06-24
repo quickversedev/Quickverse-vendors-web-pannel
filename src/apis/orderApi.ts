@@ -43,7 +43,7 @@ const orderApi = api.injectEndpoints({
         }
 
         return {
-          url: `/v2/order/${shopId}/orders`,
+          url: `/quickVerse/v2/order/${shopId}/orders`,
           method: "GET",
           ...(cleanParams.toString() && { params: cleanParams }),
         };

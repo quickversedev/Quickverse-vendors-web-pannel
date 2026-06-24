@@ -6,6 +6,7 @@ import Layout from './Layout/Dashboardlayout';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import OrderHistory from './pages/OrderHistory';
+import StoreStatusPage from './pages/StoreSchedule'
 
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/vendor" element={<Layout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="order-history" element={<OrderHistory />} />
+          <Route path="store-status" element={<StoreStatusPage />} />
 
         </Route>
         </Route>

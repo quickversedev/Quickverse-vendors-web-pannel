@@ -1,12 +1,12 @@
-import { useEffect, useState, useRef } from "react";
-import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
-import type { OrderActionEvent } from "../types/order";
-import { useAuthStore } from "../stores/useAuthStore";
-import { useOrderStore } from "../stores/useOrderStore"; // ✅ Added
-import { toast } from 'react-hot-toast';
 import { CheckCircle, XCircle } from 'lucide-react';
+import { useEffect, useRef, useState } from "react";
+import { toast } from 'react-hot-toast';
+import SockJS from "sockjs-client";
 import { baseurl } from "../apis";
+import { useAuthStore } from "../stores/useAuthStore";
+import { useOrderStore } from "../stores/useOrderStore";
+import type { OrderActionEvent } from "../types/order";
 
 // ✅ Validator for new orders
 const isValidOrder = (data: any): data is OrderActionEvent => {
@@ -35,7 +35,7 @@ export const useOrderWebsocket = () => {
     }
 
     const client = new Client({
-      webSocketFactory: () => new SockJS(baseurl+"/ws"), // 
+      webSocketFactory: () => new SockJS(baseurl + "/quickVerse/ws"), // 
       debug: (str) => console.log("STOMP:", str),
       reconnectDelay: 5000,
       connectHeaders: {

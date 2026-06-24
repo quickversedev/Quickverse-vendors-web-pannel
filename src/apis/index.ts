@@ -3,8 +3,10 @@ import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 export const baseurl = import.meta.env.VITE_API_URL;
 const api = createApi({
   reducerPath: "api",
+  tagTypes: ["VendorSchedule"],
+  
   baseQuery: fetchBaseQuery({
-    baseUrl: `${baseurl}/quickVerse`,
+    baseUrl: `${baseurl}`,
     prepareHeaders: (headers) => {
       headers.set(
         "Authorization",
