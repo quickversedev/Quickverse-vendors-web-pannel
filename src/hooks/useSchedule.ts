@@ -1,96 +1,101 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
-import { useConfigureVendorScheduleMutation } from "../apis/schedule";
+import { useConfigureVendorScheduleMutation, useToggleManualOfflineMutation } from "../apis/schedule";
 import type { DayOfWeek, OperatingHours } from "../types/schedule";
-import {useAuthStore} from '../stores/useAuthStore';
+import { useAuthStore } from '../stores/useAuthStore';
 
+export type ScheduleFeedback = { type: 'success' | 'error' |'offline'; message: string } | null;
 
 export const useSchedule = () => {
-
   const { shopId } = useAuthStore();
-  // ─── UI Panel Display State ────────────────────────────────
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [viewAllOpen, setViewAllOpen] = useState(false);
+  const [feedback, setFeedback] = useState<ScheduleFeedback>(null);
 
-  // ─── RTK Query Mutation Hook ──────────────────────────────
   const [configureSchedule, { isLoading: isSaving }] = useConfigureVendorScheduleMutation();
+  const [toggleManualOffline, { isLoading: isToggling }] = useToggleManualOfflineMutation();
 
-  // Helper toggle function for the master layout button
-  const toggleFormPanel = () => setIsFormOpen((prev) => !prev);
+  const toggleFormPanel = () => { setIsFormOpen((prev) => !prev); setFeedback(null); };
+  const clearFeedback = () => setFeedback(null);
 
-  // ─── Centralized Submit Pipeline ──────────────────────────
+  // ─── BUG 2 FIX: Corrected Toggle Logic & Added Error Timeout ─────────
+  const handleToggleStoreStatus = async (isCurrentlyOnline: boolean) => {
+    if (!shopId) return;
+    setFeedback(null);
+
+    try {
+      // Logic Fix: If Online (true) -> We want Offline (true). So send exactly isCurrentlyOnline!
+      await toggleManualOffline({
+        shopId,
+        manualOfflineOverride: isCurrentlyOnline,
+      }).unwrap();
+
+      setFeedback({ 
+        type: isCurrentlyOnline ? 'offline' : 'success', 
+        message: `Store is now ${isCurrentlyOnline ? 'Offline' : 'Online'}` 
+      });
+      setTimeout(() => setFeedback(null), 2500);
+      
+    } catch (error) {
+      console.error("Failed to toggle status:", error);
+      setFeedback({ type: 'error', message: 'Failed to change store status.' });
+      
+      // ✅ FIX: Auto-close error message after 2.5 seconds
+      setTimeout(() => setFeedback(null), 2500);
+    }
+  };
+
+  // ─── BUG 3 FIX: Added Error Timeout to Config Save ─────────────────
   const saveScheduleGrid = async (operatingHoursObj: OperatingHours) => {
     if (!shopId) {
-      toast.error("Session expired. Shop ID missing.");
+      setFeedback({ type: 'error', message: 'Session expired. Shop ID missing.' });
+      setTimeout(() => setFeedback(null), 2500);
       return;
     }
-    try {
-      // Active Recall Guard: Transform clean JS object to escaped string payload
-      const stringifiedHours = JSON.stringify(operatingHoursObj);
+    setFeedback(null);
 
+    try {
+      const stringifiedHours = JSON.stringify(operatingHoursObj);
       await configureSchedule({
         shopId,
-        manualOfflineOverride: false, // Driven strictly by calendar matrix tracking
-        scheduleActive: true,         // Activating scheduling slots engine live
+        manualOfflineOverride: false, 
+        scheduleActive: true,         
         operatingHours: stringifiedHours,
-      }).unwrap(); // unwrap unlocks direct try/catch control over the network promise
+      }).unwrap(); 
 
-      // Rule: Auto-close form panel on successful API completion
-      toast.success("Schedule successfully deployed!");
-      setIsFormOpen(false);
+      setFeedback({ type: 'success', message: "Weekly schedule successfully deployed!" });
+      setTimeout(() => {
+        setIsFormOpen(false);
+        setFeedback(null);
+      }, 1500);
     } catch (error) {
-      // Rule: Keep form open on failure so vendor inputs are preserved
       console.error("Schedule configuration error:", error);
-      toast.error("Failed to save configuration. Please verify inputs.");
-    }
+      setFeedback({ type: 'error', message: "Failed to save configuration. Please verify inputs." });
+      
+      // ✅ FIX: Auto-close error message after 3 seconds
+      setTimeout(() => setFeedback(null), 3000); 
+    };
   };
 
-  // ─── Specific Formatting Handlers for the 3 Input Cards ───
-
-  // 1. Custom Time Handler
-  const handleCustomTimeSave = async (data: { date: string; startTime: string; endTime: string }) => {
-    // Generate standard 7-day format structure where target day holds the custom slots
-    const dayName = new Date(data.date).toLocaleDateString("en-US", { weekday: "short" }) as DayOfWeek;
-
-    const operationalMatrix = {
-      [dayName]: { openTime: data.startTime, closeTime: data.endTime }
-    } as OperatingHours;
-
-    await saveScheduleGrid(operationalMatrix);
-  };
-
-  // 2. All Day Closed Handler
-  const handleAllDayClosedSave = async (data: { date: string }) => {
-    const dayName = new Date(data.date).toLocaleDateString("en-US", { weekday: "short" }) as DayOfWeek;
-
-    // Setting both pointers to "00:00" flags a standard full 24-hr system block
-    const operationalMatrix = {
-      [dayName]: { openTime: "00:00", closeTime: "00:00" }
-    } as OperatingHours;
-
-    await saveScheduleGrid(operationalMatrix);
-  };
-
-  // 3. Recurring Slots Handler
-  const handleRecurringSave = async (data: { selectedDays: string[]; startDate: string; endDate?: string }) => {
-    const operationalMatrix = {} as OperatingHours;
-
-    // Distribute default lock times across every chosen target day row
-    data.selectedDays.forEach((day) => {
-      operationalMatrix[day as DayOfWeek] = { openTime: "09:00", closeTime: "21:00" };
-    });
-
-    await saveScheduleGrid(operationalMatrix);
+  const handleDeleteDay = async (
+    dayToDelete: DayOfWeek,
+    currentOperatingHours: OperatingHours
+  ) => {
+    const { [dayToDelete]: removedDay, ...remainingDays } = currentOperatingHours;
+    await saveScheduleGrid(remainingDays as OperatingHours);
   };
 
   return {
     isFormOpen,
     viewAllOpen,
     isSaving,
+    feedback,
+    clearFeedback,
     toggleFormPanel,
     setViewAllOpen,
-    handleCustomTimeSave,
-    handleAllDayClosedSave,
-    handleRecurringSave,
+    isToggling,
+    handleToggleStoreStatus,
+    handleDeleteDay,
+    saveScheduleGrid,
   };
 };

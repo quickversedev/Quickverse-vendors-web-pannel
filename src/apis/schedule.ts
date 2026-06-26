@@ -38,15 +38,15 @@ export const scheduleApi = api.injectEndpoints({
 
     // ─── 3. EMERGENCY MANUAL OFFLINE OVERRIDE (PATCH) ───────────────
     toggleManualOffline: build.mutation<
-      VendorScheduleResponse,
+      string, 
       { shopId: string; manualOfflineOverride: boolean }
     >({
       query: ({ shopId, manualOfflineOverride }) => ({
         url: `/v1/vendor-schedules/shop/${shopId}/manual-offline`,
         method: "PATCH",
         params: { manualOfflineOverride },
+        responseHandler: "text", 
       }),
-      // Instantly forces cache refresh so the Read-Only toggle flips visual states
       invalidatesTags: (_result, _error, arg) => [{ type: "VendorSchedule", id: arg.shopId }],
     }),
   }),
