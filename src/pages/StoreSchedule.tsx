@@ -75,9 +75,9 @@ export const StoreSchedulePage = () => {
 
   if (isLoading || !shopId) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-zinc-500 bg-[#09090b]">
-        <Loader2 className="animate-spin text-emerald-500 mb-2" size={24} />
-        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-slate-400 dark:text-zinc-500 bg-transparent">
+        <Loader2 className="animate-spin text-[#1e40af] dark:text-emerald-500 mb-2" size={24} />
+        <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
           {!shopId ? "Verifying Vendor..." : "Syncing Store Matrix..."}
         </p>
       </div>
@@ -85,28 +85,28 @@ export const StoreSchedulePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-100 p-6 space-y-6">
+    <div className="min-h-screen text-slate-900 dark:text-zinc-100 p-6 space-y-6">
 
-      <div className="flex items-center justify-between border-b border-zinc-800/80 pb-5">
+      <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800/80 pb-5">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-zinc-100">Store Status</h1>
-          <p className="text-xs text-zinc-500 mt-0.5 font-medium">
+          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">Store Status</h1>
+          <p className="text-xs text-slate-500 dark:text-zinc-500 mt-0.5 font-medium">
             Monitor real-time shop visibility metrics and manage schedule operations.
           </p>
         </div>
 
-        <div className="relative p-2 rounded-xl border border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-zinc-100 transition cursor-help group shadow-sm">
+        <div className="relative p-2 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 text-slate-400 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-100 transition cursor-help group shadow-sm">
           <Bell size={18} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border border-zinc-900 animate-pulse" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border border-white dark:border-zinc-900 animate-pulse" />
         </div>
       </div>
 
-      <div className="p-5 bg-[#18181b] border border-zinc-700/60 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[0_8px_30px_rgba(255,255,255,0.03)]">
+      <div className="p-5 bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-700/60 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm dark:shadow-[0_8px_30px_rgba(255,255,255,0.03)]">
         <div className="flex items-center gap-5">
           <div className="space-y-1">
-            <h3 className="text-sm font-bold text-zinc-200 tracking-wide">Current Shop Status</h3>
-            <p className="text-[11px] text-zinc-500 flex items-center gap-1.5 font-medium">
-              <Info size={12} className="text-zinc-600 shrink-0" />
+            <h3 className="text-sm font-bold text-slate-800 dark:text-zinc-200 tracking-wide">Current Shop Status</h3>
+            <p className="text-[11px] text-slate-500 dark:text-zinc-500 flex items-center gap-1.5 font-medium">
+              <Info size={12} className="text-slate-400 dark:text-zinc-600 shrink-0" />
               Toggle to manually override schedules and force your store online/offline.
             </p>
           </div>
@@ -123,7 +123,7 @@ export const StoreSchedulePage = () => {
             }`}
           >
             <div className={`w-2.5 h-2.5 rounded-full ${isShopOnline ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"}`} />
-            <span className={`text-[11px] font-bold uppercase tracking-widest pr-1 ${isShopOnline ? "text-emerald-400" : "text-rose-400"}`}>
+            <span className={`text-[11px] font-bold uppercase tracking-widest pr-1 ${isShopOnline ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
               {isToggling ? "Updating..." : isShopOnline ? "Online" : "Offline"}
             </span>
           </button>
@@ -133,8 +133,8 @@ export const StoreSchedulePage = () => {
           onClick={toggleFormPanel}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 active:scale-[0.98] ${
             isFormOpen
-              ? "bg-zinc-800/80 border border-zinc-700 text-zinc-300 hover:bg-zinc-700"
-              : "bg-zinc-100 text-zinc-900 hover:bg-white shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+              ? "bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700"
+              : "bg-[#1e40af] dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-[#1e3a8a] dark:hover:bg-white shadow-[0_0_20px_rgba(30,64,175,0.15)] dark:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
           }`}
         >
           <CalendarPlus size={14} />
@@ -145,8 +145,8 @@ export const StoreSchedulePage = () => {
      {feedback && (
         <div className={`flex items-center gap-3 p-4 rounded-xl border animate-in fade-in slide-in-from-top-2 duration-300 ${
           feedback.type === 'success' 
-            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" 
-            : "bg-rose-500/10 border-rose-500/30 text-rose-400"
+            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400" 
+            : "bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400"
         }`}>
           {/* Dynamically swap icons based on state */}
           {feedback.type === 'success' ? <CheckCircle2 size={18} /> : 

@@ -11,6 +11,7 @@ import {
 } from "../apis/authentication";
 import { useAuthStore } from "../stores/useAuthStore";
 import { unlockAudio } from "../utils/audio";
+import { useThemeStore } from "../stores/useThemeStore";
 
 const MOBILE_LENGTH = 10;
 const INDIAN_MOBILE_REGEX = /^[6-9]\d{9}$/;
@@ -22,10 +23,15 @@ const Authentication = () => {
   const [verificationId, setVerificationId] = useState("");
 
   const { isAuthenticated, saveSession } = useAuthStore();
+  const { setTheme } = useThemeStore();
 
   const [requestOtp, { isLoading: isRequestingOtp }] = useRequestOtpMutation();
   const [login, { isLoading: isLoggingIn }] = useLoginMutation();
 
+  // Login page defaults to light theme
+  useEffect(() => {
+    setTheme("light");
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -110,11 +116,11 @@ const Authentication = () => {
   };
 
   return (
-    <main className="min-h-screen bg-zinc-950 px-4 py-6">
+    <main className="min-h-screen bg-[#F1F5F9] dark:bg-zinc-950 px-4 py-6">
 
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-3xl items-center justify-center">
-        <section className="w-full max-w-sm rounded-xl border border-zinc-800 bg-zinc-900 p-6 shadow-sm shadow-black/30">
-          <h1 className="mb-6 text-center text-3xl font-semibold text-zinc-100">
+        <section className="w-full max-w-sm rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-lg dark:shadow-sm dark:shadow-black/30">
+          <h1 className="mb-6 text-center text-3xl font-semibold text-slate-900 dark:text-zinc-100">
             QuickVerse
           </h1>
 
@@ -147,7 +153,7 @@ const Authentication = () => {
             </CustomButton>
           </form>
 
-          <p className="mt-3 text-sm text-zinc-400">
+          <p className="mt-3 text-sm text-slate-500 dark:text-zinc-400">
             We will send otp though sms
           </p>
         </section>

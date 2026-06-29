@@ -97,13 +97,13 @@ const OtpModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4">
-      <div className="w-full max-w-sm rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm shadow-black/30">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 dark:bg-black/60 p-4">
+      <div className="w-full max-w-sm rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-lg dark:shadow-sm dark:shadow-black/30">
 
         <div className="mb-6 flex items-start justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-zinc-100">Verify OTP</h2>
-            <p className="mt-1 text-sm text-zinc-400">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-zinc-100">Verify OTP</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-zinc-400">
               Enter the 4-digit code sent to +91 {mobileNumber}
             </p>
             <div className="mt-4 text-sm font-medium text-red-500">
@@ -140,7 +140,7 @@ const OtpModal = ({
                   handleDigitChange(index, event.target.value)
                 }
                 onKeyDown={(event) => handleBackspace(index, event)}
-                className="h-14 w-14 rounded-md border border-zinc-700 bg-zinc-950 text-center text-xl font-medium text-zinc-100 outline-none focus:border-zinc-400"
+                className="h-14 w-14 rounded-md border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-950 text-center text-xl font-medium text-slate-900 dark:text-zinc-100 outline-none focus:border-[#1e40af] dark:focus:border-zinc-400"
                 aria-label={`OTP digit ${index + 1}`}
               />
             ))}

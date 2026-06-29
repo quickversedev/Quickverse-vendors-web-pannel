@@ -16,14 +16,14 @@ const TextInput = ({
   return (
     <div className="space-y-1">
       {label ? (
-        <label htmlFor={id} className="block text-sm font-medium text-zinc-300">
+        <label htmlFor={id} className="block text-sm font-medium text-slate-700 dark:text-zinc-300">
           {label}
         </label>
       ) : null}
       <input
         id={id}
         className={[
-          "w-full rounded-md border border-zinc-700 bg-zinc-950 px-3 py-3 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-zinc-400",
+          "w-full rounded-md border border-slate-300 bg-white px-3 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-[#1e40af] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-400",
           error ? "border-red-500 focus:border-red-400" : "",
           className,
         ].join(" ")}

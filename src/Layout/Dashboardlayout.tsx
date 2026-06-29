@@ -46,12 +46,12 @@ const Layout = () => {
   }, [incomingOrders, viewedOrderIds]);
 
   return (
-    <main className="h-screen bg-zinc-950 p-4">
+    <main className="h-screen bg-[#F1F5F9] dark:bg-zinc-950 p-4">
       <div className="flex h-full gap-4">
         {/* Sidebar stays exactly same */}
         <Sidebar />
 
-        <section className="h-full w-[85%] rounded-xl border border-zinc-800 bg-zinc-900">
+        <section className="h-full w-[85%] rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
           <Navbar  />
 
           <div className="h-[90%] overflow-y-auto p-5">

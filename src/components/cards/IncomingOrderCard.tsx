@@ -75,15 +75,15 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
   };
 
   return (
-    <div className="relative bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-xl hover:border-zinc-700 transition-all">
+    <div className="relative bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm dark:shadow-xl hover:border-slate-300 dark:hover:border-zinc-700 transition-all">
       {/* Top Section */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-zinc-400 font-mono text-xs">#{order.orderId}</span>
+          <span className="h-2 w-2 rounded-full bg-[#1e40af] dark:bg-emerald-500 animate-pulse" />
+          <span className="text-slate-500 dark:text-zinc-400 font-mono text-xs">#{order.orderId}</span>
         </div>
         {isViewed && (
-          <span className="px-2 py-0.5 bg-zinc-800 text-zinc-500 text-[10px] font-bold rounded uppercase">
+          <span className="px-2 py-0.5 bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-500 text-[10px] font-bold rounded uppercase">
             Viewed
           </span>
         )}
@@ -91,11 +91,11 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
 
       {/* Items Section */}
       <div className="mb-4">
-        <h4 className="text-white font-semibold text-lg line-clamp-1">
+        <h4 className="text-slate-900 dark:text-white font-semibold text-lg line-clamp-1">
           {order.orderItems.map(i => i.name).join(", ")}
         </h4>
         {/* Hide description if it is same as order items */}
-        <p className={`text-zinc-500 text-sm mt-1 line-clamp-2 ${order.orderDescription === order.orderItems.map(i => i.name).join(", ")
+        <p className={`text-slate-500 dark:text-zinc-500 text-sm mt-1 line-clamp-2 ${order.orderDescription === order.orderItems.map(i => i.name).join(", ")
           ? 'invisible'
           : 'visible'
           }`}>
@@ -105,15 +105,15 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
 
       {/* Customer Details Section */}
       {(order.customerName || order.customerPhone || order.customerAddress) && (
-        <div className="mb-4 bg-zinc-950/50 rounded-lg p-3 border border-zinc-800/50">
+        <div className="mb-4 bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-3 border border-slate-100 dark:border-zinc-800/50">
           <div className="flex flex-col gap-1.5">
 
             {/* NAME  */}
             {order.customerName && (
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-zinc-500 shrink-0">👤</span>
+                <span className="text-slate-400 dark:text-zinc-500 shrink-0">👤</span>
                 <p
-                  className="text-sm text-zinc-200 font-medium truncate"
+                  className="text-sm text-slate-700 dark:text-zinc-200 font-medium truncate"
                   title={order.customerName}
                 >
                   {order.customerName}
@@ -125,14 +125,14 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
             {order.customerPhone && (
               <div className="flex items-center justify-between group min-w-0 gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-zinc-500 shrink-0">📞</span>
-                  <p className="text-xs text-zinc-400 font-mono truncate">
+                  <span className="text-slate-400 dark:text-zinc-500 shrink-0">📞</span>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 font-mono truncate">
                     {cleanPhone}
                   </p>
                 </div>
                 <button
                   onClick={() => handleCopy(cleanPhone, "Phone")}
-                  className="text-zinc-500 hover:text-emerald-400 transition-colors p-1 shrink-0"
+                  className="text-slate-400 dark:text-zinc-500 hover:text-[#1e40af] dark:hover:text-emerald-400 transition-colors p-1 shrink-0"
                 >
                   {copiedField === "Phone" ? <Check size={14} /> : <Copy size={14} />}
                 </button>
@@ -143,9 +143,9 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
             {order.customerAddress && (
               <div className="flex items-start justify-between group gap-2 min-w-0">
                 <div className="flex items-start gap-2 min-w-0 flex-1">
-                  <span className="text-zinc-500 shrink-0 mt-0.5">📍</span>
+                  <span className="text-slate-400 dark:text-zinc-500 shrink-0 mt-0.5">📍</span>
                   <p
-                    className="text-xs text-zinc-500 line-clamp-2 break-all mt-0.5"
+                    className="text-xs text-slate-500 dark:text-zinc-500 line-clamp-2 break-all mt-0.5"
                     title={cleanAddress}
                   >
                     {cleanAddress}
@@ -153,7 +153,7 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
                 </div>
                 <button
                   onClick={() => handleCopy(cleanAddress, "Address")}
-                  className="text-zinc-500 hover:text-emerald-400 transition-colors p-1 shrink-0 mt-0.5"
+                  className="text-slate-400 dark:text-zinc-500 hover:text-[#1e40af] dark:hover:text-emerald-400 transition-colors p-1 shrink-0 mt-0.5"
                 >
                   {copiedField === "Address" ? <Check size={14} /> : <Copy size={14} />}
                 </button>
@@ -165,14 +165,14 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
       )}
 
       {/* Price & Quantity */}
-      <div className="flex border-t border-zinc-800 pt-4 mb-5 gap-6">
+      <div className="flex border-t border-slate-200 dark:border-zinc-800 pt-4 mb-5 gap-6">
         <div>
-          <p className="text-[10px] text-zinc-500 uppercase font-bold">Total Amount</p>
-          <p className="text-emerald-400 font-bold text-xl">₹{order.totalOrderAmount}</p>
+          <p className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-bold">Total Amount</p>
+          <p className="text-[#1e40af] dark:text-emerald-400 font-bold text-xl">₹{order.totalOrderAmount}</p>
         </div>
         <div>
-          <p className="text-[10px] text-zinc-500 uppercase font-bold">Quantity</p>
-          <p className="text-white font-bold text-xl">{order.totalQuantity}</p>
+          <p className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-bold">Quantity</p>
+          <p className="text-slate-900 dark:text-white font-bold text-xl">{order.totalQuantity}</p>
         </div>
       </div>
 
@@ -185,7 +185,7 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
 
       <button
         onClick={handleView}
-        className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all active:scale-[0.98] shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+        className="w-full py-3 bg-[#1e40af] hover:bg-[#1e3a8a] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white font-bold rounded-xl transition-all active:scale-[0.98] shadow-[0_0_20px_rgba(30,64,175,0.15)] dark:shadow-[0_0_20px_rgba(16,185,129,0.2)]"
       >
         View Order
       </button>

@@ -14,12 +14,12 @@ const Dashboard = () => {
 
       {/* Stats Header with Refresh Button */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-zinc-400">Welcome to QuickVerse dashboard.</p>
+        <p className="text-sm text-slate-500 dark:text-zinc-400">Welcome to QuickVerse dashboard.</p>
 
         <button
           onClick={() => refresh()}
           disabled={isLoading}
-          className={`p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-all active:scale-95 ${isLoading ? 'animate-spin' : ''}`}
+          className={`p-2 rounded-lg bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-400 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-all active:scale-95 ${isLoading ? 'animate-spin' : ''}`}
         >
           <RotateCw className="w-4 h-4" />
         </button>
@@ -33,12 +33,12 @@ const Dashboard = () => {
       </div>
 
       {/* New Incoming Orders Section */}
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 min-h-[500px]">
+      <div className="bg-slate-50/50 dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-3xl p-6 min-h-[500px]">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             New Incoming Orders
             {incomingOrders.length > 0 && (
-              <span className="bg-emerald-500 text-zinc-950 text-xs px-2 py-1 rounded-full">
+              <span className="bg-[#1e40af] dark:bg-emerald-500 text-white dark:text-zinc-950 text-xs px-2 py-1 rounded-full">
                 {incomingOrders.length}
               </span>
             )}
@@ -53,11 +53,11 @@ const Dashboard = () => {
           </div>
         ) : (
           /* Empty State */
-          <div className="flex flex-col items-center justify-center h-[400px] text-zinc-500">
-            <div className="bg-zinc-800/30 p-8 rounded-full mb-6">
+          <div className="flex flex-col items-center justify-center h-[400px] text-slate-400 dark:text-zinc-500">
+            <div className="bg-slate-100 dark:bg-zinc-800/30 p-8 rounded-full mb-6">
               <Inbox className="w-16 h-16 opacity-20" />
             </div>
-            <h3 className="text-xl font-semibold text-zinc-300">No new incoming orders</h3>
+            <h3 className="text-xl font-semibold text-slate-600 dark:text-zinc-300">No new incoming orders</h3>
             <p className="text-sm mt-2">We'll notify you as soon as a new order arrives! 😊</p>
           </div>
         )}

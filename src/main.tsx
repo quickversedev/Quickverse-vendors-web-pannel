@@ -5,6 +5,9 @@ import { reduxStore } from './stores/reduxStore'
 import './index.css'
 import App from './App.tsx'
 
+// Initialize theme on boot (applies 'dark' class to <html> if needed)
+import './stores/useThemeStore'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={reduxStore}>

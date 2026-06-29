@@ -91,19 +91,19 @@ const handleTimeChange = (time: string) => {
 
   // ─── Render ──────────────────────────────────────────────────
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-5 min-h-full">
+    <div className="rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 min-h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-xl font-semibold text-zinc-100">Order History</h2>
-          <p className="text-sm text-zinc-500 mt-0.5">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-zinc-100">Order History</h2>
+          <p className="text-sm text-slate-500 dark:text-zinc-500 mt-0.5">
             {orders.length} order{orders.length !== 1 ? "s" : ""} found
           </p>
         </div>
         <button
           onClick={() => refetch()}
           disabled={isFetching}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-zinc-700 text-zinc-300 text-xs font-medium hover:bg-zinc-800 transition disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-zinc-700 text-slate-500 dark:text-zinc-300 text-xs font-medium hover:bg-slate-50 dark:hover:bg-zinc-800 transition disabled:opacity-50"
         >
           <RefreshCw size={14} className={isFetching ? "animate-spin" : ""} />
           {isFetching ? "Refreshing..." : "Refresh"}
@@ -128,7 +128,7 @@ const handleTimeChange = (time: string) => {
       {/* Loading state */}
       {isLoading && (
         <div className="flex items-center justify-center py-20">
-          <div className="flex items-center gap-3 text-zinc-400">
+          <div className="flex items-center gap-3 text-slate-400 dark:text-zinc-400">
             <RefreshCw size={20} className="animate-spin" />
             <span className="text-sm">Loading orders...</span>
           </div>

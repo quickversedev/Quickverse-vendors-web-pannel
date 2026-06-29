@@ -10,8 +10,8 @@ const Navbar = () => {
   const { clearSession } = useAuthStore();
 
   return (
-    <header className="flex h-[5%] min-h-16 items-center justify-between border-b border-zinc-800 px-5">
-      <p className="text-sm text-zinc-400">
+    <header className="flex h-[5%] min-h-16 items-center justify-between border-b border-slate-200 dark:border-zinc-800 px-5">
+      <p className="text-sm text-slate-500 dark:text-zinc-400">
         Vendor Dashboard-👨‍🍳
       </p>
       

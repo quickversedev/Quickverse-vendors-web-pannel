@@ -45,9 +45,9 @@ const FilterBar = ({
   const pillBase =
     "px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer border";
   const pillActive =
-    "bg-zinc-100 text-zinc-900 border-zinc-100";
+    "bg-[#1e40af] text-white border-[#1e40af] dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100";
   const pillInactive =
-    "bg-transparent text-zinc-400 border-zinc-700 hover:border-zinc-500 hover:text-zinc-200";
+    "bg-transparent text-slate-500 border-slate-300 hover:border-slate-400 hover:text-slate-700 dark:text-zinc-400 dark:border-zinc-700 dark:hover:border-zinc-500 dark:hover:text-zinc-200";
 
  
 
@@ -55,7 +55,7 @@ const FilterBar = ({
     <div className="space-y-3">
       {/* ─── Row 1: Status Filter Pills ──────────────────── */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium text-zinc-500 mr-1">Status:</span>
+        <span className="text-xs font-medium text-slate-500 dark:text-zinc-500 mr-1">Status:</span>
         {STATUS_OPTIONS.map((opt) => (
           <button
             key={opt.value}
@@ -70,7 +70,7 @@ const FilterBar = ({
 
       {/* ─── Row 2: Time Filter Pills + Dropdowns + DatePicker ── */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium text-zinc-500 mr-1">Time:</span>
+        <span className="text-xs font-medium text-slate-500 dark:text-zinc-500 mr-1">Time:</span>
 
         {/* Quick time pills */}
         {TIME_OPTIONS.map((opt) => (
@@ -107,9 +107,9 @@ const FilterBar = ({
               showMonthDropdown
               dropdownMode="select"
 
-              className="bg-zinc-800 text-zinc-300 text-xs rounded-lg px-3 py-1.5 border border-zinc-700 outline-none w-32 focus:border-zinc-500"
+              className="bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs rounded-lg px-3 py-1.5 border border-slate-300 dark:border-zinc-700 outline-none w-32 focus:border-[#1e40af] dark:focus:border-zinc-500"
             />
-            <span className="text-zinc-600 text-xs">→</span>
+            <span className="text-slate-400 dark:text-zinc-600 text-xs">→</span>
             <DatePicker
               selected={customEndDate}
               onChange={(date: Date | null) => onCustomDateChange(customStartDate, date)}
@@ -121,7 +121,7 @@ const FilterBar = ({
               showMonthDropdown
               dropdownMode="select"
 
-              className="bg-zinc-800 text-zinc-300 text-xs rounded-lg px-3 py-1.5 border border-zinc-700 outline-none w-32 focus:border-zinc-500"
+              className="bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs rounded-lg px-3 py-1.5 border border-slate-300 dark:border-zinc-700 outline-none w-32 focus:border-[#1e40af] dark:focus:border-zinc-500"
             />
           </div>
         )}
