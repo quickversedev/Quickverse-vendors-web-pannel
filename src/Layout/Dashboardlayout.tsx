@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { useOrderWebsocket } from "../hooks/useOrderWebsocket";
-import { useOrderStore } from "../stores/useOrderStore"; // 
+import { useDashboardStore } from "../stores/useDashboardStore";
 import { notificationAudio } from "../utils/audio";
 import { useCallback } from "react";
 
@@ -12,30 +12,28 @@ const Layout = () => {
    useOrderWebsocket();
   const isPlayingRef = useRef(false); // Add this at the top with other hooks
 
-  // 2. Get incoming orders and viewed status from the store to manage sound
+  // 2. Get pending orders from the new dashboard store
   const [isAudioBlocked, setIsAudioBlocked] = useState(false);
-  const incomingOrders = useOrderStore((state) => state.incomingOrders);
-  const viewedOrderIds = useOrderStore((state) => state.viewedOrderIds);
+  const pendingOrders = useDashboardStore((state) => state.pendingOrders);
 
   const playIfNeeded = useCallback(() => {
-  const hasUnviewedOrders = incomingOrders.some(
-    order => !viewedOrderIds.has(order.orderId)
-  );
-  if (hasUnviewedOrders && !isPlayingRef.current) {
-    notificationAudio.play()
-      .then(() => {
-        isPlayingRef.current = true;
-      })
-      .catch(() => {
-        setIsAudioBlocked(true);
-      });
-  }
-}, [incomingOrders, viewedOrderIds]);
-  useEffect(() => {
-    // Check if there is at least one order that hasn't been viewed yet
-    const hasUnviewedOrders = incomingOrders.some(order => !viewedOrderIds.has(order.orderId));
+    const hasUnviewedOrders = pendingOrders.length > 0;
+    
+    if (hasUnviewedOrders && !isPlayingRef.current) {
+      notificationAudio.play()
+        .then(() => {
+          isPlayingRef.current = true;
+        })
+        .catch(() => {
+          setIsAudioBlocked(true);
+        });
+    }
+  }, [pendingOrders]);
 
-    //  Play sound if there are UNVIEWED orders, stop if all are viewed (or list is empty)
+  useEffect(() => {
+    const hasUnviewedOrders = pendingOrders.length > 0;
+
+    //  Play sound if there are pending orders, stop if list is empty
     if (hasUnviewedOrders) {
       playIfNeeded();
     } else {
@@ -43,7 +41,7 @@ const Layout = () => {
       notificationAudio.currentTime = 0;
       isPlayingRef.current = false;
     }
-  }, [incomingOrders, viewedOrderIds]);
+  }, [pendingOrders, playIfNeeded]);
 
   return (
     <main className="h-screen bg-[#F1F5F9] dark:bg-zinc-950 p-4">

@@ -12,7 +12,14 @@ export interface OrderActionEvent {
   message: string;
   createdAt: string;
   createdBy: string;
+  // New fields for real-time dashboard
+  preparationTime?: number;
+  acceptedAt?: string;
+  readyAt?: string;
+  riderName?: string;
+  riderETA?: string;
 }
+
 export interface OrderApiResponse {
    orderId: string;
    campusId: string;
@@ -32,8 +39,10 @@ export interface OrderApiResponse {
    paymentMethod?: string; 
    orderDescription: string;
 }
+
 export interface OrderItem {
   id: number;
   name: string;
   itemCount: number;
+  itemPrice?: number;
 }
