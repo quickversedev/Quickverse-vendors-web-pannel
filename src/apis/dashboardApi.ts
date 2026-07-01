@@ -6,17 +6,17 @@ const dashboardApi = api.injectEndpoints({
     acceptOrder: build.mutation<any, { orderId: string; preparationTime: number }>({
       query: ({ orderId, preparationTime }) => ({
         url: `/quickVerse/v2/order/${orderId}/accept`,
-        method: "POST",
-        body: { preparationTime },
+        method: "PATCH",
+        params: { preparationTime },
       }),
     }),
     
     // Reject order
-    rejectOrder: build.mutation<any, { orderId: string; reason?: string }>({
+    rejectOrder: build.mutation<any, { orderId: string; reason: string }>({
       query: ({ orderId, reason }) => ({
         url: `/quickVerse/v2/order/${orderId}/reject`,
-        method: "POST",
-        body: { reason },
+        method: "PATCH",
+        params: { reason },
       }),
     }),
     
@@ -24,7 +24,7 @@ const dashboardApi = api.injectEndpoints({
     markOrderReady: build.mutation<any, { orderId: string }>({
       query: ({ orderId }) => ({
         url: `/quickVerse/v2/order/${orderId}/ready`,
-        method: "POST",
+        method: "PATCH",
       }),
     }),
     
@@ -32,7 +32,7 @@ const dashboardApi = api.injectEndpoints({
     handoverOrder: build.mutation<any, { orderId: string }>({
       query: ({ orderId }) => ({
         url: `/quickVerse/v2/order/${orderId}/handover`,
-        method: "POST",
+        method: "PATCH",
       }),
     }),
 

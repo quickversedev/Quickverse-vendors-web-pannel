@@ -1,5 +1,5 @@
 import { Client } from "@stomp/stompjs";
-import { CheckCircle, XCircle, Info } from 'lucide-react';
+import { CheckCircle, Info, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from "react";
 import { toast } from 'react-hot-toast';
 import SockJS from "sockjs-client";
@@ -23,7 +23,7 @@ export const useOrderWebsocket = () => {
   const [isConnected, setIsConnected] = useState(false);
   const jwt = useAuthStore((state) => state.jwt);
   const shopId = useAuthStore((state) => state.shopId);
-  
+
   const { addPendingOrder, updateOrder, removeOrder } = useDashboardStore();
 
   const clientRef = useRef<Client | null>(null);
@@ -63,25 +63,25 @@ export const useOrderWebsocket = () => {
               // If it's just { orderId, status }, it might not have enough info to show in Accepted.
               // For now we'll just update it if we have it. If it comes from backend as a full object, we add it.
               if (isValidOrder(data)) {
-                 // Add to accepted (will be handled by store if we manually dispatch it or we can just update it)
-                 // The best way is to let the frontend logic move it on button click, 
-                 // and use WS for syncing across multiple devices.
-                 updateOrder(data.orderId, data); 
+                // Add to accepted (will be handled by store if we manually dispatch it or we can just update it)
+                // The best way is to let the frontend logic move it on button click, 
+                // and use WS for syncing across multiple devices.
+                updateOrder(data.orderId, data);
               } else {
-                 updateOrder(data.orderId, { status: "ACCEPTED", ...data });
+                updateOrder(data.orderId, { status: "ACCEPTED", ...data });
               }
-              
+
               toast.success(`${data.orderId} : Order Accepted`, {
                 icon: <CheckCircle className="text-emerald-500 w-6 h-6" />,
                 className: "bg-white text-black font-bold p-4 rounded-xl shadow-[0_4px_20px_rgba(16,185,129,0.15)] dark:bg-zinc-900 dark:text-white dark:shadow-[0_4px_20px_rgba(16,185,129,0.2)]",
               });
             }
             else if (currentStatus === "READY_FOR_PICKUP") {
-               updateOrder(data.orderId, { status: "READY_FOR_PICKUP", ...data });
-               toast.success(`${data.orderId} : Ready for Pickup`, {
-                 icon: <Info className="text-blue-500 w-6 h-6" />,
-                 className: "bg-white text-black font-bold p-4 rounded-xl shadow-[0_4px_20px_rgba(59,130,246,0.15)] dark:bg-zinc-900 dark:text-white",
-               });
+              updateOrder(data.orderId, { status: "READY_FOR_PICKUP", ...data });
+              toast.success(`${data.orderId} : Ready for Pickup`, {
+                icon: <Info className="text-blue-500 w-6 h-6" />,
+                className: "bg-white text-black font-bold p-4 rounded-xl shadow-[0_4px_20px_rgba(59,130,246,0.15)] dark:bg-zinc-900 dark:text-white",
+              });
             }
             else if (currentStatus === "REJECTED") {
               removeOrder(data.orderId);
