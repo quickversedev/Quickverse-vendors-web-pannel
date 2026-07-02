@@ -1,42 +1,33 @@
+import { CheckCircle, FileClock, PlayCircle } from "lucide-react";
 import { useEffect } from "react";
-import { SummaryStatsRow } from "../components/dashboard/SummaryStatsRow";
+import { AcceptedOrderCard } from "../components/dashboard/AcceptedOrderCard";
 import { OrderColumn } from "../components/dashboard/OrderColumn";
 import { PendingOrderCard } from "../components/dashboard/PendingOrderCard";
-import { AcceptedOrderCard } from "../components/dashboard/AcceptedOrderCard";
 import { ReadyOrderCard } from "../components/dashboard/ReadyOrderCard";
+import { SummaryStatsRow } from "../components/dashboard/SummaryStatsRow";
+import { useDashboardStats } from "../hooks/useDashboardStats";
 import { useDashboardStore } from "../stores/useDashboardStore";
 import { useOrderStore } from "../stores/useOrderStore"; // Legacy
-import { FileClock, PlayCircle, CheckCircle } from "lucide-react";
-import { useDashboardStats } from "../hooks/useDashboardStats";
 
 const Dashboard = () => {
   const { pendingOrders, acceptedOrders, readyOrders, addPendingOrder } = useDashboardStore();
   const { incomingOrders } = useOrderStore(); // From legacy store
   const { refresh } = useDashboardStats();
 
-  // Sync legacy store with new store (since WS still writes to legacy for now, or just to handle initial load)
-  useEffect(() => {
-    // If there are incoming orders in the old store, move them to the new store
-    if (incomingOrders.length > 0) {
-      incomingOrders.forEach(order => {
-        addPendingOrder({ ...order, status: "PENDING" });
-      });
-      useOrderStore.getState().clearAll();
-    }
-  }, [incomingOrders, addPendingOrder]);
+  ;
 
   return (
     <div className="flex flex-col h-full animate-in fade-in duration-700">
-      
+
       {/* 1. Summary Stats Row */}
       <SummaryStatsRow />
 
       {/* 2. Main 3-Column Board */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
-        
+
         {/* PENDING COLUMN */}
-        <OrderColumn 
-          title="Pending Orders" 
+        <OrderColumn
+          title="Pending Orders"
           count={pendingOrders.length}
           icon={<FileClock size={16} />}
           headerBgClass="bg-red-50 dark:bg-red-950/30 border-t-2 border-t-red-500"
@@ -49,8 +40,8 @@ const Dashboard = () => {
         </OrderColumn>
 
         {/* ACCEPTED COLUMN */}
-        <OrderColumn 
-          title="Accepted Orders" 
+        <OrderColumn
+          title="Accepted Orders"
           count={acceptedOrders.length}
           icon={<PlayCircle size={16} />}
           headerBgClass="bg-amber-50 dark:bg-amber-950/30 border-t-2 border-t-amber-500"
@@ -62,8 +53,8 @@ const Dashboard = () => {
         </OrderColumn>
 
         {/* READY FOR PICKUP COLUMN */}
-        <OrderColumn 
-          title="Ready For Pickup" 
+        <OrderColumn
+          title="Ready For Pickup"
           count={readyOrders.length}
           icon={<CheckCircle size={16} />}
           headerBgClass="bg-green-50 dark:bg-green-950/30 border-t-2 border-t-green-500"

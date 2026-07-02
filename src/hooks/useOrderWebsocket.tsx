@@ -24,7 +24,9 @@ export const useOrderWebsocket = () => {
   const jwt = useAuthStore((state) => state.jwt);
   const shopId = useAuthStore((state) => state.shopId);
 
-  const { addPendingOrder, updateOrder, removeOrder } = useDashboardStore();
+  const addPendingOrder = useDashboardStore((state) => state.addPendingOrder);
+  const updateOrder = useDashboardStore((state) => state.updateOrder);
+  const removeOrder = useDashboardStore((state) => state.removeOrder);
 
   const clientRef = useRef<Client | null>(null);
 
@@ -49,6 +51,7 @@ export const useOrderWebsocket = () => {
         console.log("📡 Subscribing to:", topic);
 
         client.subscribe(topic, (message) => {
+          console.log("RAW message Received:", message.body);
           try {
             const data = JSON.parse(message.body);
             console.log("🔔 WebSocket Message received:", data);
@@ -113,6 +116,12 @@ export const useOrderWebsocket = () => {
               data.status = "PENDING";
               addPendingOrder(data);
             }
+            // Old Code for testing
+            // else if (isValidOrder(data)) {
+            //   console.log("➕ New Incoming Order added to grid:", data.orderId);
+            //   addPendingOrder(data);
+            // }
+
           } catch (e) {
             console.error("WebSocket Parse error:", e);
           }
