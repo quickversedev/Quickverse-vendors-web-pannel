@@ -6,7 +6,7 @@ const authenticationApi = api.injectEndpoints({
     // Request Otp for a given mobile number
     requestOtp: build.mutation({
       query: (phone: string) => ({
-        url: "/v1/requestOtp",  // change vendor otp endpoint url
+        url: "/quickVerse/v1/requestOtp",  // change vendor otp endpoint url
         method: "POST",
         body: { phone },
       }),
@@ -23,7 +23,7 @@ const authenticationApi = api.injectEndpoints({
         otp: string;
         verificationId: string;
       }) => ({
-        url: "/v1/login", // change vendor login endpoint url
+        url: "/quickVerse/v1/login", // change vendor login endpoint url
         method: "POST",
         body: { phone: `${phone}`, otp, verificationId },
       }),

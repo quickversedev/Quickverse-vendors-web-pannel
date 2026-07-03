@@ -111,16 +111,16 @@ export const useOrderWebsocket = () => {
             }
 
             // 2. Check for New Incoming Orders (PENDING)
-            else if (isValidOrder(data) && (currentStatus === "PENDING" || !currentStatus)) {
-              console.log("➕ New Incoming Order added to grid:", data.orderId);
-              data.status = "PENDING";
-              addPendingOrder(data);
-            }
-            // Old Code for testing
-            // else if (isValidOrder(data)) {
+            // else if (isValidOrder(data) && (currentStatus === "PENDING" || !currentStatus)) {
             //   console.log("➕ New Incoming Order added to grid:", data.orderId);
+            //   data.status = "PENDING";
             //   addPendingOrder(data);
             // }
+            // Old Code for testing
+            else if (isValidOrder(data)) {
+              console.log("➕ New Incoming Order added to grid:", data.orderId);
+              addPendingOrder(data);
+            }
 
           } catch (e) {
             console.error("WebSocket Parse error:", e);

@@ -8,6 +8,7 @@ interface DashboardState {
   
   // Actions
   addPendingOrder: (order: OrderActionEvent) => void;
+  setInitialOrders: (orders: any[]) => void;
   updateOrder: (orderId: string, updates: Partial<OrderActionEvent>) => void;
   moveToAccepted: (orderId: string, preparationTime: number) => void;
   moveToReady: (orderId: string) => void;
@@ -19,6 +20,33 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   pendingOrders: [],
   acceptedOrders: [],
   readyOrders: [],
+
+  setInitialOrders: (orders) => set(() => {
+    const mapped: OrderActionEvent[] = orders.map((o: any) => ({
+      orderId: o.orderId,
+      totalOrderAmount: String(o.totalAmount ?? o.totalOrderAmount ?? ""),
+      totalQuantity: String(o.totalItemCount ?? o.totalQuantity ?? ""),
+      orderDescription: o.orderDescription || "",
+      orderItems: o.orderItem || o.orderItems || [],
+      customerName: o.customerName || "",
+      customerPhone: String(o.customerMobile ?? o.customerPhone ?? ""),
+      customerAddress: o.customerAddress || "",
+      id: String(o.shopId ?? o.id ?? ""),
+      status: o.state || o.status || "",
+      message: o.message || "",
+      createdAt: o.creationTime || o.createdAt || new Date().toISOString(),
+      createdBy: String(o.customerId ?? o.createdBy ?? ""),
+      preparationTime: o.preparationTime,
+      acceptedAt: o.acceptedDate || o.acceptedAt,
+      readyAt: o.readyDate || o.readyAt,
+    }));
+
+    return {
+      pendingOrders: mapped.filter(o => o.status === "PENDING"),
+      acceptedOrders: mapped.filter(o => o.status === "ACCEPTED"),
+      readyOrders: mapped.filter(o => o.status === "READY_FOR_PICKUP"),
+    };
+  }),
 
   addPendingOrder: (order) => set((state) => {
     // Check if it already exists in any array to prevent duplicates

@@ -73,5 +73,5 @@ export const useDashboardStats = () => {
     refetchOrders();
   };
   
-  return { stats, isLoading: isApiLoading || isOrdersLoading || isFetching, refresh };
+  return { stats, allOrders, isLoading: isApiLoading || isOrdersLoading || isFetching, refresh };
 };

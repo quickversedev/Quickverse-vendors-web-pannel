@@ -10,11 +10,15 @@ import { useDashboardStore } from "../stores/useDashboardStore";
 import { useOrderStore } from "../stores/useOrderStore"; // Legacy
 
 const Dashboard = () => {
-  const { pendingOrders, acceptedOrders, readyOrders, addPendingOrder } = useDashboardStore();
+  const { pendingOrders, acceptedOrders, readyOrders, setInitialOrders } = useDashboardStore();
   const { incomingOrders } = useOrderStore(); // From legacy store
-  const { refresh } = useDashboardStats();
+  const { allOrders } = useDashboardStats();
 
-  ;
+  useEffect(() => {
+    if (allOrders) {
+      setInitialOrders(allOrders);
+    }
+  }, [allOrders, setInitialOrders]);
 
   return (
     <div className="flex flex-col h-full animate-in fade-in duration-700">
