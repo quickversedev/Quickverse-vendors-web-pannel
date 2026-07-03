@@ -8,12 +8,13 @@ import toast from "react-hot-toast";
 interface ReadyOrderCardProps {
   order: OrderActionEvent;
   sequence: number;
+  onViewDetails: () => void;
 }
 
-export const ReadyOrderCard = ({ order, sequence }: ReadyOrderCardProps) => {
+export const ReadyOrderCard = ({ order, sequence, onViewDetails }: ReadyOrderCardProps) => {
   const { displayTime } = useOrderTimer(order.readyAt || order.acceptedAt || order.createdAt, "UP");
   const { removeOrder } = useDashboardStore();
-  
+
   const [handover, { isLoading }] = useHandoverOrderMutation();
 
   const handleHandover = async () => {
@@ -28,7 +29,7 @@ export const ReadyOrderCard = ({ order, sequence }: ReadyOrderCardProps) => {
 
   return (
     <div className="bg-white dark:bg-zinc-900 border border-green-300 dark:border-green-900/50 rounded-xl p-4 shadow-sm relative hover:shadow-md transition-shadow">
-      
+
       {/* Top Header */}
       <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-zinc-800 pb-3">
         <div className="flex items-center gap-2">
@@ -36,11 +37,13 @@ export const ReadyOrderCard = ({ order, sequence }: ReadyOrderCardProps) => {
           <span className="text-sm font-black text-slate-800 dark:text-zinc-100">{order.orderId}</span>
         </div>
         <div className="flex items-center gap-2">
-           <div className="flex flex-col items-end">
-             <span className="text-[9px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest">Ready Since</span>
-             <span className="text-sm font-bold text-green-600 dark:text-green-500">{displayTime}</span>
-           </div>
-          <button className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-500 transition-colors ml-1">
+          <div className="flex flex-col items-end">
+            <span className="text-[9px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest">Ready Since</span>
+            <span className="text-sm font-bold text-green-600 dark:text-green-500">{displayTime}</span>
+          </div>
+          <button
+            onClick={onViewDetails}
+            className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-500 transition-colors ml-1">
             <Eye size={16} />
           </button>
         </div>
@@ -73,19 +76,19 @@ export const ReadyOrderCard = ({ order, sequence }: ReadyOrderCardProps) => {
 
       {/* Rider Info */}
       <div className="bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-3 mb-4 border border-slate-200 dark:border-zinc-800/80 flex items-center justify-between">
-         <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-green-600 dark:text-green-500 uppercase flex items-center gap-1">
-               🛵 Rider Assigned
-            </span>
-            <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 mt-1">
-               Rider: {order.riderName || "Waiting for Rider"}
-            </span>
-         </div>
-         <div className="flex flex-col items-end">
-            <span className="text-xs font-bold text-slate-500 dark:text-zinc-400">
-               ETA: <span className="text-blue-600 dark:text-blue-400">{order.riderETA || "--"}</span>
-            </span>
-         </div>
+        <div className="flex flex-col">
+          <span className="text-[10px] font-bold text-green-600 dark:text-green-500 uppercase flex items-center gap-1">
+            🛵 Rider Assigned
+          </span>
+          <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 mt-1">
+            Rider: {order.riderName || "Waiting for Rider"}
+          </span>
+        </div>
+        <div className="flex flex-col items-end">
+          <span className="text-xs font-bold text-slate-500 dark:text-zinc-400">
+            ETA: <span className="text-blue-600 dark:text-blue-400">{order.riderETA || "--"}</span>
+          </span>
+        </div>
       </div>
 
       {/* Action Button */}

@@ -37,10 +37,7 @@ export const useOrderTimer = (startTime: string | undefined, type: "UP" | "DOWN"
         
         if (diffInSeconds < 0) {
           setIsOverdue(true);
-          const absDiff = Math.abs(diffInSeconds);
-          const minutes = Math.floor(absDiff / 60);
-          const seconds = absDiff % 60;
-          setDisplayTime(`-${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`);
+          setDisplayTime("00:00");
         } else {
           setIsOverdue(false);
           const minutes = Math.floor(diffInSeconds / 60);

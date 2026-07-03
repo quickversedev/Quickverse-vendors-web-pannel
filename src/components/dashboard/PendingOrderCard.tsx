@@ -1,49 +1,39 @@
-import { useState } from "react";
-import { Eye, Check, X } from "lucide-react";
-import type { OrderActionEvent } from "../../types/order";
+import { Check, Eye, X } from "lucide-react";
 import { useOrderTimer } from "../../hooks/useOrderTimer";
-import { useDashboardStore } from "../../stores/useDashboardStore";
-import { useAcceptOrderMutation, useRejectOrderMutation } from "../../apis/dashboardApi";
-import toast from "react-hot-toast";
+import { usePendingOrder } from "../../hooks/usePendingOrders";
+import type { OrderActionEvent } from "../../types/order";
 
 interface PendingOrderCardProps {
   order: OrderActionEvent;
   sequence: number;
+  onViewDetails: () => void;
 }
 
-const PREP_TIMES = [5, 10, 15, 20, 25, 30];
+const PREP_TIMES = [5, 10, 15, 20, 25];
 
-export const PendingOrderCard = ({ order, sequence }: PendingOrderCardProps) => {
-  const [prepTime, setPrepTime] = useState<number>(15);
+export const PendingOrderCard = ({ order, sequence, onViewDetails }: PendingOrderCardProps) => {
   const { displayTime } = useOrderTimer(order.createdAt, "UP");
-  const { moveToAccepted, removeOrder } = useDashboardStore();
-  
-  const [acceptOrder, { isLoading: isAccepting }] = useAcceptOrderMutation();
-  const [rejectOrder, { isLoading: isRejecting }] = useRejectOrderMutation();
 
-  const handleAccept = async () => {
-    try {
-      await acceptOrder({ orderId: order.orderId, preparationTime: prepTime }).unwrap();
-      moveToAccepted(order.orderId, prepTime);
-      toast.success(`Order ${order.orderId} Accepted`);
-    } catch (error) {
-      toast.error(`Failed to accept order ${order.orderId}`);
-    }
-  };
-
-  const handleReject = async () => {
-    try {
-      await rejectOrder({ orderId: order.orderId, reason: "Vendor Rejected" }).unwrap();
-      removeOrder(order.orderId);
-      toast.success(`Order ${order.orderId} Rejected`);
-    } catch (error) {
-      toast.error(`Failed to reject order ${order.orderId}`);
-    }
-  };
+  // ─── Injecting logic from our new custom hook ───
+  const {
+    prepTime,
+    setPrepTime,
+    showRejectForm,
+    setShowRejectForm,
+    rejectReason,
+    setRejectReason,
+    reasonError,
+    setReasonError,
+    isAccepting,
+    isRejecting,
+    handleAccept,
+    handleConfirmReject,
+    handleCancelReject
+  } = usePendingOrder(order.orderId);
 
   return (
     <div className="bg-white dark:bg-zinc-900 border border-red-200 dark:border-red-900/50 rounded-xl p-4 shadow-sm relative hover:shadow-md transition-shadow">
-      
+
       {/* Top Header */}
       <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-zinc-800 pb-3">
         <div className="flex items-center gap-2">
@@ -52,7 +42,9 @@ export const PendingOrderCard = ({ order, sequence }: PendingOrderCardProps) => 
           <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-black uppercase rounded">New</span>
         </div>
         <div className="flex items-center gap-2">
-          <button className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-500 transition-colors">
+          <button
+            onClick={onViewDetails}
+            className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-500 transition-colors">
             <Eye size={16} />
           </button>
           <span className="text-sm font-bold text-red-600 dark:text-red-400">{displayTime}</span>
@@ -85,43 +77,98 @@ export const PendingOrderCard = ({ order, sequence }: PendingOrderCardProps) => 
         </ul>
       </div>
 
-      {/* Preparation Time Selector */}
-      <div className="mb-4">
-        <p className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Select Preparation Time</p>
-        <div className="flex flex-wrap gap-2">
-          {PREP_TIMES.map(time => (
-            <button
-              key={time}
-              onClick={() => setPrepTime(time)}
-              className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-all ${
-                prepTime === time 
-                ? "bg-blue-600 text-white shadow-md" 
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-              }`}
-            >
-              {time} min
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Conditional UI Swap Area */}
+      {showRejectForm ? (
+        // ─── STATE B: REJECT CONFIRMATION FORM ───
+        <div className="animate-in fade-in slide-in-from-bottom-2 duration-200 bg-red-50 dark:bg-red-950/20 p-3 rounded-lg border border-red-100 dark:border-red-900/30">
+          <p className="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+            <X size={12} /> Confirm Rejection
+          </p>
 
-      {/* Action Buttons */}
-      <div className="flex gap-2">
-        <button
-          onClick={handleAccept}
-          disabled={isAccepting}
-          className="flex-1 flex justify-center items-center gap-1.5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
-        >
-          <Check size={16} /> {isAccepting ? "Accepting..." : "Accept Order"}
-        </button>
-        <button
-          onClick={handleReject}
-          disabled={isRejecting}
-          className="flex-1 flex justify-center items-center gap-1.5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
-        >
-          <X size={16} /> {isRejecting ? "Rejecting..." : "Reject Order"}
-        </button>
-      </div>
+          <input
+            type="text"
+            required
+            autoFocus
+            placeholder="Type reason here... (Required)"
+            value={rejectReason}
+            onChange={(e) => {
+              setRejectReason(e.target.value);
+
+              if (e.target.value.trim().length >= 3) {
+                setReasonError("");
+              }
+            }}
+
+            className={`w-full text-xs px-3 py-2 mb-1 border rounded-lg bg-white dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 ${reasonError
+                ? "border-red-500 focus:ring-red-500/50"
+                : "border-red-200 dark:border-red-900/50 focus:ring-red-500/50"
+              }`}
+          />
+
+
+          {reasonError && (
+            <p className="text-[10px] font-bold text-red-600 dark:text-red-400 mb-3 ml-1 animate-in fade-in">
+              {reasonError}
+            </p>
+          )}
+
+
+          <div className={`flex gap-2 ${!reasonError ? "mt-3" : ""}`}>
+            <button
+              onClick={handleCancelReject}
+              className="flex-1 flex justify-center items-center py-2 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmReject}
+              disabled={isRejecting}
+              className="flex-1 flex justify-center items-center gap-1.5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
+            >
+              {isRejecting ? "Rejecting..." : "Reject"}
+            </button>
+          </div>
+        </div>
+      ) : (
+        // ─── STATE A: STANDARD ACCEPT/REJECT BUTTONS ───
+        <>
+          {/* Preparation Time Selector */}
+          <div className="mb-4">
+            <p className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Select Preparation Time</p>
+            <div className="flex flex-wrap gap-2">
+              {PREP_TIMES.map(time => (
+                <button
+                  key={time}
+                  onClick={() => setPrepTime(time)}
+                  className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-all ${prepTime === time
+                      ? "bg-blue-600 text-white shadow-md"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                    }`}
+                >
+                  {time} min
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={handleAccept}
+              disabled={isAccepting}
+              className="flex-1 flex justify-center items-center gap-1.5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
+            >
+              <Check size={16} /> {isAccepting ? "Accepting..." : "Accept Order"}
+            </button>
+            <button
+              onClick={() => setShowRejectForm(true)}
+              className="flex-1 flex justify-center items-center gap-1.5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
+            >
+              <X size={16} /> Reject Order
+            </button>
+          </div>
+        </>
+      )}
 
     </div>
   );

@@ -1,4 +1,4 @@
-import { Eye, Check } from "lucide-react";
+import { Eye, Check, AlertCircle } from "lucide-react";
 import type { OrderActionEvent } from "../../types/order";
 import { useOrderTimer } from "../../hooks/useOrderTimer";
 import { useDashboardStore } from "../../stores/useDashboardStore";
@@ -8,15 +8,19 @@ import toast from "react-hot-toast";
 interface AcceptedOrderCardProps {
   order: OrderActionEvent;
   sequence: number;
+  onViewDetails: () => void;
 }
 
-export const AcceptedOrderCard = ({ order, sequence }: AcceptedOrderCardProps) => {
+export const AcceptedOrderCard = ({ order, sequence, onViewDetails }: AcceptedOrderCardProps) => {
   const prepTime = order.preparationTime || 15;
-  const { displayTime, isOverdue } = useOrderTimer(order.acceptedAt || order.createdAt, "DOWN", prepTime);
+
+  // Timer uses the updated hook logic which stops at "00:00"
+  const { displayTime } = useOrderTimer(order.acceptedAt || order.createdAt, "DOWN", prepTime);
+
   const { moveToReady } = useDashboardStore();
-  
   const [markReady, { isLoading }] = useMarkOrderReadyMutation();
 
+  // ─── Inline Action Handler (No extra hook needed) ───
   const handleMarkReady = async () => {
     try {
       await markReady({ orderId: order.orderId }).unwrap();
@@ -27,9 +31,14 @@ export const AcceptedOrderCard = ({ order, sequence }: AcceptedOrderCardProps) =
     }
   };
 
+  // ─── Warning Logic: Trigger if time is 01:00 or starts with 00: (e.g. 00:59 to 00:00) ───
+  const isTimeCritical = displayTime === "01:00" || displayTime.startsWith("00:");
+  const isTimeUp = displayTime === "00:00";
+
   return (
-    <div className="bg-white dark:bg-zinc-900 border border-amber-200 dark:border-amber-900/50 rounded-xl p-4 shadow-sm relative hover:shadow-md transition-shadow">
-      
+    <div className={`bg-white dark:bg-zinc-900 border rounded-xl p-4 shadow-sm relative hover:shadow-md transition-shadow ${isTimeUp ? "border-red-500 dark:border-red-500/50" : "border-amber-200 dark:border-amber-900/50"
+      }`}>
+
       {/* Top Header */}
       <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-zinc-800 pb-3">
         <div className="flex items-center gap-2">
@@ -40,7 +49,9 @@ export const AcceptedOrderCard = ({ order, sequence }: AcceptedOrderCardProps) =
           <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold uppercase rounded-md border border-amber-200 dark:border-amber-700/50">
             Prep Time: {prepTime} min
           </span>
-          <button className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-500 transition-colors">
+          <button
+            onClick={onViewDetails}
+            className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-500 transition-colors">
             <Eye size={16} />
           </button>
         </div>
@@ -71,28 +82,23 @@ export const AcceptedOrderCard = ({ order, sequence }: AcceptedOrderCardProps) =
 
       {/* Timer & Progress */}
       <div className="flex flex-col items-center justify-center py-2 mb-4">
-        <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-widest">Remaining</span>
-        <span className={`text-2xl font-black tabular-nums ${isOverdue ? 'text-red-600 dark:text-red-500' : 'text-amber-500'}`}>
+        <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-widest">Remaining Time</span>
+
+        <span className={`text-2xl font-black tabular-nums transition-colors ${isTimeUp ? 'text-red-600 dark:text-red-500 animate-pulse' :
+            isTimeCritical ? 'text-red-500' : 'text-amber-500'
+          }`}>
           {displayTime}
         </span>
-        
-        {/* Simple Progress Bar */}
-        <div className="w-full flex items-center justify-between mt-3 px-2">
-           <div className="flex flex-col items-center gap-1">
-             <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-             <span className="text-[9px] font-bold text-amber-600 dark:text-amber-500">Accepted</span>
-           </div>
-           <div className="flex-1 h-0.5 bg-amber-200 dark:bg-amber-900/50 mx-1"></div>
-           <div className="flex flex-col items-center gap-1">
-             <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-             <span className="text-[9px] font-bold text-amber-600 dark:text-amber-500">Preparing</span>
-           </div>
-           <div className="flex-1 h-0.5 bg-slate-200 dark:bg-zinc-700 mx-1"></div>
-           <div className="flex flex-col items-center gap-1">
-             <div className="w-2 h-2 rounded-full bg-slate-200 dark:bg-zinc-700"></div>
-             <span className="text-[9px] font-bold text-slate-400 dark:text-zinc-500">Ready</span>
-           </div>
-        </div>
+
+        {/* ─── CRITICAL WARNING MESSAGE ─── */}
+        {isTimeCritical && (
+          <div className="flex items-center gap-1.5 mt-1.5 animate-in fade-in zoom-in duration-300">
+            <AlertCircle size={12} className="text-red-500" />
+            <span className="text-[10px] font-bold text-red-600 dark:text-red-500 uppercase tracking-wide">
+              {isTimeUp ? "Time is up! Mark Ready Now" : "Please Mark Ready For Pickup"}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Action Button */}
