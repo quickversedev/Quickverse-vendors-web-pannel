@@ -4,7 +4,7 @@ import { useGetVendorOrdersQuery } from "../apis/orderApi";
 import FilterBar from "../components/orders/FilterBar";
 import OrderTable from "../components/orders/OrderTable";
 import { RefreshCw, AlertCircle } from "lucide-react";
-import OrderDetailModal from "../components/orders/OrderDetailModal";
+import { OrderDetailsModal } from "../components/common/OrderDetailsModal";
 import type { OrderApiResponse } from "../types/order";
 import { OrderStatusFilter, TimeFilterOption } from "../types/filters";
 
@@ -161,7 +161,7 @@ const handleTimeChange = (time: string) => {
         />
       )}
       {selectedOrder && (
-        <OrderDetailModal
+        <OrderDetailsModal
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
         />

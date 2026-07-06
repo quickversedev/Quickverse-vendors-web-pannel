@@ -14,8 +14,8 @@ interface AcceptedOrderCardProps {
 export const AcceptedOrderCard = ({ order, sequence, onViewDetails }: AcceptedOrderCardProps) => {
   const prepTime = order.preparationTime || 15;
 
-  // Timer uses the updated hook logic which stops at "00:00"
-  const { displayTime } = useOrderTimer(order.acceptedAt || order.createdAt, "DOWN", prepTime);
+  
+  const { displayTime } = useOrderTimer(order.acceptedDate || order.creationTime, "DOWN", order.preparationTime);
 
   const { moveToReady } = useDashboardStore();
   const [markReady, { isLoading }] = useMarkOrderReadyMutation();
@@ -61,15 +61,15 @@ export const AcceptedOrderCard = ({ order, sequence, onViewDetails }: AcceptedOr
       <div className="flex justify-between items-start mb-3">
         <div>
           <h4 className="text-sm font-bold text-slate-800 dark:text-zinc-200">{order.customerName}</h4>
-          <p className="text-[10px] text-slate-500 dark:text-zinc-500 mt-0.5">📞 {order.customerPhone}</p>
+          <p className="text-[10px] text-slate-500 dark:text-zinc-500 mt-0.5">📞 {order.customerMobile}</p>
         </div>
-        <span className="text-base font-black text-slate-900 dark:text-white">₹{order.totalOrderAmount}</span>
+        <span className="text-base font-black text-slate-900 dark:text-white">₹{order.amountExcludingDeliveryFee}</span>
       </div>
 
       {/* Order Items */}
       <div className="bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-2.5 mb-4 border border-slate-100 dark:border-zinc-800/80">
         <ul className="space-y-1.5">
-          {order.orderItems?.map((item, idx) => (
+          {order.orderItem?.map((item, idx) => (
             <li key={idx} className="flex justify-between text-xs">
               <span className="text-slate-700 dark:text-zinc-300">
                 <span className="font-bold text-slate-500 dark:text-zinc-500 mr-2">{item.itemCount}x</span>

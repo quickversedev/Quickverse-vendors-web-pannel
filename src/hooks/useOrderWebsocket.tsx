@@ -9,13 +9,16 @@ import { useDashboardStore } from "../stores/useDashboardStore";
 import type { OrderActionEvent } from "../types/order";
 
 // ✅ Validator for new orders
-const isValidOrder = (data: any): data is OrderActionEvent => {
+const isValidOrder = (data: any): boolean => {
   if (typeof data !== "object" || data === null) return false;
-  return (
-    typeof data.orderId === "string" &&
-    typeof data.totalOrderAmount === "string" &&
-    Array.isArray(data.orderItems)
-  );
+  
+  // It should at least have an orderId
+  if (typeof data.orderId !== "string") return false;
+
+  // Accept if it has either orderItems or orderItem
+  const hasItems = Array.isArray(data.orderItems) || Array.isArray(data.orderItem);
+  
+  return hasItems;
 };
 
 // ── WebSocket Hook ───────────────────────────────────────
@@ -110,13 +113,6 @@ export const useOrderWebsocket = () => {
               });
             }
 
-            // 2. Check for New Incoming Orders (PENDING)
-            // else if (isValidOrder(data) && (currentStatus === "PENDING" || !currentStatus)) {
-            //   console.log("➕ New Incoming Order added to grid:", data.orderId);
-            //   data.status = "PENDING";
-            //   addPendingOrder(data);
-            // }
-            // Old Code for testing
             else if (isValidOrder(data)) {
               console.log("➕ New Incoming Order added to grid:", data.orderId);
               addPendingOrder(data);
