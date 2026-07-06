@@ -1,55 +1,67 @@
 import { useState, useEffect } from "react";
 
-/**
- * Hook to manage order timers. 
- * Can count UP (elapsed time) or DOWN (remaining time).
- */
 export const useOrderTimer = (startTime: string | undefined, type: "UP" | "DOWN", durationMinutes: number = 0) => {
   const [displayTime, setDisplayTime] = useState("--:--");
-  const [isOverdue, setIsOverdue] = useState(false);
 
   useEffect(() => {
-    if (!startTime) return;
+    if (!startTime) {
+       setDisplayTime("--:--");
+       return;
+    }
 
-    const startTimestamp = new Date(startTime).getTime();
-    if (isNaN(startTimestamp)) return;
+    // ─── SMART DATE PARSER ───
+    // moveToAccepted / moveToReady store UTC ISO strings (with Z) in sessionStorage.
+    // Those are always used first, so we only reach this with backend timestamps as
+    // a last-resort fallback. Just normalise the space separator; browser will use
+    // the OS/browser locale for timezone, which is fine for the fallback path.
+    let startTimestamp: number;
+    if (typeof startTime === 'string') {
+        if (/^\d+$/.test(startTime)) {
+            startTimestamp = Number(startTime); // Unix ms timestamp
+        } else {
+            const safeTimeStr = startTime.replace(" ", "T");
+            startTimestamp = new Date(safeTimeStr).getTime();
+        }
+    } else {
+        startTimestamp = new Date(startTime).getTime();
+    }
 
-    const intervalId = setInterval(() => {
+    if (isNaN(startTimestamp)) {
+        setDisplayTime("--:--");
+        return;
+    }
+
+    const calculateTime = () => {
       const now = Date.now();
       
       if (type === "UP") {
-        // Count UP: How much time has passed since startTime
-        const diffInSeconds = Math.floor((now - startTimestamp) / 1000);
-        
-        if (diffInSeconds < 0) {
-           setDisplayTime("00:00");
-           return;
-        }
-
+        // UP TIMER (Starts from 0, goes up)
+        // Math.max ensures time doesn't go negative if client clock is slightly behind server
+        const diffInSeconds = Math.max(0, Math.floor((now - startTimestamp) / 1000));
         const minutes = Math.floor(diffInSeconds / 60);
         const seconds = diffInSeconds % 60;
         setDisplayTime(`${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`);
       } 
-      else {
-        // Count DOWN: How much time is remaining from (startTime + durationMinutes)
+      else if (type === "DOWN") {
+        // DOWN TIMER (Reverse timer based on prep time)
         const targetTimestamp = startTimestamp + (durationMinutes * 60 * 1000);
         const diffInSeconds = Math.floor((targetTimestamp - now) / 1000);
         
-        if (diffInSeconds < 0) {
-          setIsOverdue(true);
-          setDisplayTime("00:00");
+        if (diffInSeconds <= 0) {
+          setDisplayTime("00:00"); // Stops exactly at 0
         } else {
-          setIsOverdue(false);
           const minutes = Math.floor(diffInSeconds / 60);
           const seconds = diffInSeconds % 60;
           setDisplayTime(`${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`);
         }
       }
-    }, 1000);
+    };
 
-    // Initial calculation so it doesn't wait 1 second
+    calculateTime(); // Immediate call to avoid flicker
+    const intervalId = setInterval(calculateTime, 1000);
+
     return () => clearInterval(intervalId);
   }, [startTime, type, durationMinutes]);
 
-  return { displayTime, isOverdue };
+  return { displayTime };
 };

@@ -2,7 +2,6 @@ import { CheckCircle, FileClock, PlayCircle, RefreshCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useGetVendorOrdersQuery } from "../apis/orderApi";
-
 import { AcceptedOrderCard } from "../components/dashboard/AcceptedOrderCard";
 import { OrderColumn } from "../components/dashboard/OrderColumn";
 import { PendingOrderCard } from "../components/dashboard/PendingOrderCard";
@@ -11,7 +10,8 @@ import { SummaryStatsRow } from "../components/dashboard/SummaryStatsRow";
 import { useDashboardStats } from "../hooks/useDashboardStats";
 import { useDashboardStore } from "../stores/useDashboardStore";
 import type { OrderActionEvent } from "../types/order";
-import { DashboardOrderDetailModal } from "../components/dashboard/dashboardOrderDetails";
+
+import { OrderDetailsModal } from "../components/common/OrderDetailsModal";
 
 const Dashboard = () => {
   const { shopId } = useAuthStore();
@@ -23,7 +23,11 @@ const Dashboard = () => {
   // ─── 2. FETCH INITIAL ORDERS FOR KANBAN ───
   const { data: allOrders } = useGetVendorOrdersQuery(
     { shopId: shopId ?? "" },
-    { skip: !shopId }
+    {
+      skip: !shopId,
+      pollingInterval: 45000,          // ← Auto-refresh every 45 seconds
+      refetchOnMountOrArgChange: true, // ← Re-fetch on page revisit
+    }
   );
 
   const [viewOrder, setViewOrder] = useState<OrderActionEvent | null>(null);
@@ -119,7 +123,7 @@ const Dashboard = () => {
       
       {/* ─── 3. RENDER HOISTED MODAL ─── */}
       {viewOrder && (
-        <DashboardOrderDetailModal 
+        <OrderDetailsModal 
           order={viewOrder} 
           onClose={() => setViewOrder(null)} 
         />
