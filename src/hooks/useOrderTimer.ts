@@ -31,16 +31,25 @@ export const useOrderTimer = (startTime: string | undefined, type: "UP" | "DOWN"
         return;
     }
 
+    const formatTime = (totalSeconds: number) => {
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      if (hours > 0) {
+        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      } else {
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      }
+    };
+
     const calculateTime = () => {
       const now = Date.now();
       
       if (type === "UP") {
         // UP TIMER (Starts from 0, goes up)
-        // Math.max ensures time doesn't go negative if client clock is slightly behind server
         const diffInSeconds = Math.max(0, Math.floor((now - startTimestamp) / 1000));
-        const minutes = Math.floor(diffInSeconds / 60);
-        const seconds = diffInSeconds % 60;
-        setDisplayTime(`${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`);
+        setDisplayTime(formatTime(diffInSeconds));
       } 
       else if (type === "DOWN") {
         // DOWN TIMER (Reverse timer based on prep time)
@@ -50,9 +59,7 @@ export const useOrderTimer = (startTime: string | undefined, type: "UP" | "DOWN"
         if (diffInSeconds <= 0) {
           setDisplayTime("00:00"); // Stops exactly at 0
         } else {
-          const minutes = Math.floor(diffInSeconds / 60);
-          const seconds = diffInSeconds % 60;
-          setDisplayTime(`${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`);
+          setDisplayTime(formatTime(diffInSeconds));
         }
       }
     };
