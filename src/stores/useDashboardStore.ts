@@ -33,15 +33,18 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
     const smartMerge = (incoming: Order): Order => {
       const existing = allExisting.find(e => e.orderId === incoming.orderId);
-      if (!existing) return incoming;
+      
+      // sessionStorage timestamps are the most reliable — set by the client
+      // at the exact moment of moveToAccepted/moveToReady, in UTC with Z.
+      const sessionAcceptedDate = sessionStorage.getItem(`order_${incoming.orderId}_acceptedAt`);
+      const sessionReadyDate    = sessionStorage.getItem(`order_${incoming.orderId}_readyAt`);
+
       return {
         ...incoming,
-        // LOCAL-FIRST: always keep locally-set timestamps.
-        // Use || (not ??) so even a non-null API value doesn't overwrite
-        // the local UTC string set by moveToAccepted / moveToReady.
-        readyDate:        existing.readyDate        || incoming.readyDate,
-        acceptedDate:     existing.acceptedDate     || incoming.acceptedDate,
-        preparationTime:  existing.preparationTime  || incoming.preparationTime,
+        // Priority: sessionStorage > local store > API value
+        acceptedDate:    sessionAcceptedDate || existing?.acceptedDate    || incoming.acceptedDate,
+        readyDate:       sessionReadyDate    || existing?.readyDate       || incoming.readyDate,
+        preparationTime: existing?.preparationTime || incoming.preparationTime,
       };
     };
 
@@ -76,12 +79,15 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     const orderIndex = state.pendingOrders.findIndex(o => o.orderId === orderId);
     if (orderIndex === -1) return state; 
     
+    const now = new Date().toISOString(); // UTC with Z — reliable reference
+    sessionStorage.setItem(`order_${orderId}_acceptedAt`, now); // survives page reload
+
     const order = state.pendingOrders[orderIndex];
     const acceptedOrder: Order = { 
       ...order, 
       state: "ACCEPTED",
       preparationTime,
-      acceptedDate: new Date().toISOString()
+      acceptedDate: now
     };
     
     return {
@@ -94,11 +100,14 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     const orderIndex = state.acceptedOrders.findIndex(o => o.orderId === orderId);
     if (orderIndex === -1) return state; 
     
+    const now = new Date().toISOString(); // UTC with Z — reliable reference
+    sessionStorage.setItem(`order_${orderId}_readyAt`, now); // survives page reload
+
     const order = state.acceptedOrders[orderIndex];
     const readyOrder: Order = { 
       ...order, 
       state: "READY_FOR_PICKUP",
-      readyDate: new Date().toISOString()
+      readyDate: now
     };
     
     return {
