@@ -60,22 +60,39 @@ const Layout = () => {
       </div>
 
       {isAudioBlocked && (
-        <div className="fixed bottom-4 right-4 z-[100] animate-bounce">
-          <button
-            onClick={() => {
-
-              notificationAudio.play().then(() => {
-                notificationAudio.pause();
-                notificationAudio.currentTime = 0;
-                setIsAudioBlocked(false);
-                playIfNeeded();
-              });
-            }}
-            className="bg-emerald-500 text-black px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2"
-          >
-            🔔 Enable Sound
-          </button>
-        </div>
+        <>
+          {/* Dark overlay to force attention */}
+          <div className="fixed inset-0 bg-black/40 z-[99]" />
+          <div className="fixed inset-0 z-[100] flex items-center justify-center">
+            <button
+              onClick={() => {
+                notificationAudio.play().then(() => {
+                  notificationAudio.pause();
+                  notificationAudio.currentTime = 0;
+                  setIsAudioBlocked(false);
+                  playIfNeeded();
+                });
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-2xl font-bold text-xl shadow-2xl flex items-center gap-3 transition-all"
+              style={{
+                animation: "pulse-glow 1s ease-in-out infinite",
+              }}
+            >
+              <span style={{ animation: "blink 0.8s step-end infinite", fontSize: "28px" }}>🔔</span>
+              Tap to Enable Sound
+            </button>
+          </div>
+          <style>{`
+            @keyframes pulse-glow {
+              0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(239,68,68,0.5); }
+              50% { transform: scale(1.08); box-shadow: 0 0 40px rgba(239,68,68,0.8), 0 0 80px rgba(239,68,68,0.3); }
+            }
+            @keyframes blink {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0; }
+            }
+          `}</style>
+        </>
       )}
     </main>
   );
