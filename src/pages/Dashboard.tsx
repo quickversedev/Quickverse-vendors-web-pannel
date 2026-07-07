@@ -36,6 +36,14 @@ const Dashboard = () => {
   useEffect(() => {
     if (allOrders) {
       setInitialOrders(allOrders);
+
+      // Cache vendor name in sessionStorage for Navbar (one-time write)
+      if (!sessionStorage.getItem("vendorName")) {
+        const orderWithShop = allOrders.find(o => o.shopDetails?.name);
+        if (orderWithShop?.shopDetails?.name) {
+          sessionStorage.setItem("vendorName", orderWithShop.shopDetails.name);
+        }
+      }
     }
   }, [allOrders, setInitialOrders]);
 
