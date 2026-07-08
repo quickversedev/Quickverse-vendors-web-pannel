@@ -49,7 +49,7 @@ const formatAddress = (raw: string) => {
 
 export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
   const cleanAddress = formatAddress(order.customerAddress);
-  const cleanPhone = formatPhone(order.customerPhone);
+  const cleanPhone = formatPhone(order.customerMobile ? String(order.customerMobile) : "");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const handleCopy = async (text: string, field: string) => {
@@ -92,10 +92,10 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
       {/* Items Section */}
       <div className="mb-4">
         <h4 className="text-slate-900 dark:text-white font-semibold text-lg line-clamp-1">
-          {order.orderItems.map(i => i.name).join(", ")}
+          {order.orderItem.map(i => i.name).join(", ")}
         </h4>
         {/* Hide description if it is same as order items */}
-        <p className={`text-slate-500 dark:text-zinc-500 text-sm mt-1 line-clamp-2 ${order.orderDescription === order.orderItems.map(i => i.name).join(", ")
+        <p className={`text-slate-500 dark:text-zinc-500 text-sm mt-1 line-clamp-2 ${order.orderDescription === order.orderItem.map(i => i.name).join(", ")
           ? 'invisible'
           : 'visible'
           }`}>
@@ -104,7 +104,7 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
       </div>
 
       {/* Customer Details Section */}
-      {(order.customerName || order.customerPhone || order.customerAddress) && (
+      {(order.customerName || order.customerMobile || order.customerAddress) && (
         <div className="mb-4 bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-3 border border-slate-100 dark:border-zinc-800/50">
           <div className="flex flex-col gap-1.5">
 
@@ -122,7 +122,7 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
             )}
 
             {/* PHONE  */}
-            {order.customerPhone && (
+            {order.customerMobile && (
               <div className="flex items-center justify-between group min-w-0 gap-2">
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="text-slate-400 dark:text-zinc-500 shrink-0">📞</span>
@@ -168,11 +168,11 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
       <div className="flex border-t border-slate-200 dark:border-zinc-800 pt-4 mb-5 gap-6">
         <div>
           <p className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-bold">Total Amount</p>
-          <p className="text-[#1e40af] dark:text-emerald-400 font-bold text-xl">₹{order.totalOrderAmount}</p>
+          <p className="text-[#1e40af] dark:text-emerald-400 font-bold text-xl">₹{order.totalAmount}</p>
         </div>
         <div>
           <p className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-bold">Quantity</p>
-          <p className="text-slate-900 dark:text-white font-bold text-xl">{order.totalQuantity}</p>
+          <p className="text-slate-900 dark:text-white font-bold text-xl">{order.totalItemCount}</p>
         </div>
       </div>
 
