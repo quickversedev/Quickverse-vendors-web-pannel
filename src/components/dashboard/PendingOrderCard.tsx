@@ -12,7 +12,7 @@ interface PendingOrderCardProps {
 const PREP_TIMES = [5, 10, 15, 20, 25];
 
 export const PendingOrderCard = ({ order, sequence, onViewDetails }: PendingOrderCardProps) => {
-  const { displayTime } = useOrderTimer(order.createdAt, "UP");
+const { displayTime } = useOrderTimer(order.creationTime, "UP");
 
   // ─── Injecting logic from our new custom hook ───
   const {
@@ -57,13 +57,13 @@ export const PendingOrderCard = ({ order, sequence, onViewDetails }: PendingOrde
           <h4 className="text-sm font-bold text-slate-800 dark:text-zinc-200">{order.customerName}</h4>
           <p className="text-[10px] text-slate-500 dark:text-zinc-500 mt-0.5">Received {displayTime} ago</p>
         </div>
-        <span className="text-base font-black text-slate-900 dark:text-white">₹{order.totalOrderAmount}</span>
+        <span className="text-base font-black text-slate-900 dark:text-white">₹{order.amountExcludingDeliveryFee}</span>
       </div>
 
       {/* Order Items */}
       <div className="bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-2.5 mb-4 border border-slate-100 dark:border-zinc-800/80">
         <ul className="space-y-1.5">
-          {order.orderItems?.map((item, idx) => (
+          {order.orderItem?.map((item, idx) => (
             <li key={idx} className="flex justify-between text-xs">
               <span className="text-slate-700 dark:text-zinc-300">
                 <span className="font-bold text-slate-500 dark:text-zinc-500 mr-2">{item.itemCount}x</span>

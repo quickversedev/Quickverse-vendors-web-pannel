@@ -12,7 +12,7 @@ interface ReadyOrderCardProps {
 }
 
 export const ReadyOrderCard = ({ order, sequence, onViewDetails }: ReadyOrderCardProps) => {
-  const { displayTime } = useOrderTimer(order.readyAt || order.acceptedAt || order.createdAt, "UP");
+  const { displayTime } = useOrderTimer(order.readyDate || order.creationTime, "UP");
   const { removeOrder } = useDashboardStore();
 
   const [handover, { isLoading }] = useHandoverOrderMutation();
@@ -53,14 +53,14 @@ export const ReadyOrderCard = ({ order, sequence, onViewDetails }: ReadyOrderCar
       <div className="flex justify-between items-start mb-3">
         <div>
           <h4 className="text-sm font-bold text-slate-800 dark:text-zinc-200">{order.customerName}</h4>
-          <p className="text-[10px] text-slate-500 dark:text-zinc-500 mt-0.5">📞 {order.customerPhone}</p>
+          <p className="text-[10px] text-slate-500 dark:text-zinc-500 mt-0.5">📞 {order.customerMobile}</p>
         </div>
       </div>
 
       {/* Order Items */}
       <div className="bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-2.5 mb-4 border border-slate-100 dark:border-zinc-800/80">
         <ul className="space-y-1.5">
-          {order.orderItems?.map((item, idx) => (
+          {order.orderItem?.map((item, idx) => (
             <li key={idx} className="flex justify-between text-xs">
               <span className="text-slate-700 dark:text-zinc-300">
                 <span className="font-bold text-slate-500 dark:text-zinc-500 mr-2">{item.itemCount}x</span>
@@ -78,17 +78,16 @@ export const ReadyOrderCard = ({ order, sequence, onViewDetails }: ReadyOrderCar
       <div className="bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-3 mb-4 border border-slate-200 dark:border-zinc-800/80 flex items-center justify-between">
         <div className="flex flex-col">
           <span className="text-[10px] font-bold text-green-600 dark:text-green-500 uppercase flex items-center gap-1">
-            🛵 Rider Assigned
+            🛵 Rider Details
           </span>
           <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 mt-1">
-            Rider: {order.riderName || "Waiting for Rider"}
+            Rider: {order.deliveryPartnerDetails?.name || "Waiting for Rider"}
+          </span>
+          <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 mt-1">
+            📞 {order.deliveryPartnerDetails?.mobileNumber || "--"}
           </span>
         </div>
-        <div className="flex flex-col items-end">
-          <span className="text-xs font-bold text-slate-500 dark:text-zinc-400">
-            ETA: <span className="text-blue-600 dark:text-blue-400">{order.riderETA || "--"}</span>
-          </span>
-        </div>
+
       </div>
 
       {/* Action Button */}

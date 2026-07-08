@@ -1,4 +1,5 @@
 import { useAuthStore } from "../stores/useAuthStore";
+import { useShopOnlineStatus } from "../hooks/useShopOnlineStatus";
 import { Store, Circle, Clock } from "lucide-react";
 import { useDashboardStats } from "../hooks/useDashboardStats";
 import { useEffect, useState } from "react";
@@ -6,7 +7,13 @@ import { useEffect, useState } from "react";
 const Navbar = () => {
   const shopId = useAuthStore((state) => state.shopId);
   const { stats } = useDashboardStats();
-  
+
+  // ─── Vendor Name: from sessionStorage (cached by Dashboard on first load) ───
+  const vendorName = sessionStorage.getItem("vendorName") || `Store #${shopId || "1"}`;
+
+  // ─── Live Status: from shared hook (no duplicated logic) ───
+  const isShopOnline = useShopOnlineStatus(shopId);
+
   // Real-time clock
   const [time, setTime] = useState(new Date());
   useEffect(() => {
@@ -30,18 +37,27 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <Store className="text-slate-500 dark:text-zinc-400" size={20} />
           <h2 className="text-base font-bold text-slate-800 dark:text-zinc-100">
-            {/* TODO: Get actual vendor name if available, for now hardcode generic or shopId */}
-            Vendor Store #{shopId || "1"}
+            {vendorName}
           </h2>
+          <span className="text-xs text-slate-400 dark:text-zinc-500">#{shopId}</span>
         </div>
         
-        {/* Status Badge */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 dark:bg-emerald-500/10 dark:border-emerald-500/20">
-          <Circle className="fill-emerald-500 text-emerald-500 animate-pulse" size={8} />
-          <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">
-            Online
-          </span>
-        </div>
+        {/* Status Badge — Live from Schedule API via useShopOnlineStatus */}
+        {isShopOnline ? (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 dark:bg-emerald-500/10 dark:border-emerald-500/20">
+            <Circle className="fill-emerald-500 text-emerald-500 animate-pulse" size={8} />
+            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">
+              Online
+            </span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 border border-red-200 dark:bg-red-500/10 dark:border-red-500/20">
+            <Circle className="fill-red-500 text-red-500" size={8} />
+            <span className="text-[10px] font-bold text-red-700 dark:text-red-400 uppercase tracking-widest">
+              Offline
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Right: Stats & Time */}
@@ -75,3 +91,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

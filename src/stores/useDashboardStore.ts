@@ -1,15 +1,14 @@
 import { create } from 'zustand';
-import type { OrderActionEvent } from '../types/order';
+import type { Order } from '../types/order';
 
 interface DashboardState {
-  pendingOrders: OrderActionEvent[];
-  acceptedOrders: OrderActionEvent[];
-  readyOrders: OrderActionEvent[];
+  pendingOrders: Order[];
+  acceptedOrders: Order[];
+  readyOrders: Order[];
   
-  // Actions
-  addPendingOrder: (order: OrderActionEvent) => void;
-  setInitialOrders: (orders: any[]) => void;
-  updateOrder: (orderId: string, updates: Partial<OrderActionEvent>) => void;
+  addPendingOrder: (order: Order) => void;
+  setInitialOrders: (orders: Order[]) => void;
+  updateOrder: (orderId: string, updates: Partial<Order>) => void;
   moveToAccepted: (orderId: string, preparationTime: number) => void;
   moveToReady: (orderId: string) => void;
   removeOrder: (orderId: string) => void;
@@ -21,35 +20,43 @@ export const useDashboardStore = create<DashboardState>((set) => ({
   acceptedOrders: [],
   readyOrders: [],
 
-  setInitialOrders: (orders) => set(() => {
-    const mapped: OrderActionEvent[] = orders.map((o: any) => ({
-      orderId: o.orderId,
-      totalOrderAmount: String(o.totalAmount ?? o.totalOrderAmount ?? ""),
-      totalQuantity: String(o.totalItemCount ?? o.totalQuantity ?? ""),
-      orderDescription: o.orderDescription || "",
-      orderItems: o.orderItem || o.orderItems || [],
-      customerName: o.customerName || "",
-      customerPhone: String(o.customerMobile ?? o.customerPhone ?? ""),
-      customerAddress: o.customerAddress || "",
-      id: String(o.shopId ?? o.id ?? ""),
-      status: o.state || o.status || "",
-      message: o.message || "",
-      createdAt: o.creationTime || o.createdAt || new Date().toISOString(),
-      createdBy: String(o.customerId ?? o.createdBy ?? ""),
-      preparationTime: o.preparationTime,
-      acceptedAt: o.acceptedDate || o.acceptedAt,
-      readyAt: o.readyDate || o.readyAt,
-    }));
+  // 1. MANUAL REFRESH / INITIAL LOAD (REST API)
+  // Smart-merge: preserves locally-set readyDate/acceptedDate/preparationTime
+  // so timers don't reset when the API returns them as null after a poll.
+  setInitialOrders: (orders) => set((state) => {
+    // Build a flat lookup of all orders currently in the store
+    const allExisting = [
+      ...state.pendingOrders,
+      ...state.acceptedOrders,
+      ...state.readyOrders,
+    ];
+
+    const smartMerge = (incoming: Order): Order => {
+      const existing = allExisting.find(e => e.orderId === incoming.orderId);
+      
+      // sessionStorage timestamps are the most reliable — set by the client
+      // at the exact moment of moveToAccepted/moveToReady, in UTC with Z.
+      const sessionAcceptedDate = sessionStorage.getItem(`order_${incoming.orderId}_acceptedAt`);
+      const sessionReadyDate    = sessionStorage.getItem(`order_${incoming.orderId}_readyAt`);
+
+      return {
+        ...incoming,
+        // Priority: sessionStorage > local store > API value
+        acceptedDate:    sessionAcceptedDate || existing?.acceptedDate    || incoming.acceptedDate,
+        readyDate:       sessionReadyDate    || existing?.readyDate       || incoming.readyDate,
+        preparationTime: existing?.preparationTime || incoming.preparationTime,
+      };
+    };
 
     return {
-      pendingOrders: mapped.filter(o => o.status === "PENDING"),
-      acceptedOrders: mapped.filter(o => o.status === "ACCEPTED"),
-      readyOrders: mapped.filter(o => o.status === "READY_FOR_PICKUP"),
+      pendingOrders:  orders.filter(o => o.state === "PENDING").map(smartMerge),
+      acceptedOrders: orders.filter(o => o.state === "ACCEPTED").map(smartMerge),
+      readyOrders:    orders.filter(o => o.state === "READY_FOR_PICKUP").map(smartMerge),
     };
   }),
 
+  // 2. WEBSOCKET INCOMING
   addPendingOrder: (order) => set((state) => {
-    // Check if it already exists in any array to prevent duplicates
     const exists = 
       state.pendingOrders.some(o => o.orderId === order.orderId) ||
       state.acceptedOrders.some(o => o.orderId === order.orderId) ||
@@ -57,34 +64,30 @@ export const useDashboardStore = create<DashboardState>((set) => ({
       
     if (exists) return state;
     
-    // Add to pending with current timestamp if not present
-    const newOrder = {
-      ...order,
-      createdAt: order.createdAt || new Date().toISOString()
-    };
-    
+    // Naya order hamesha PENDING me jayega
+    const newOrder: Order = { ...order, state: "PENDING" };
     return { pendingOrders: [...state.pendingOrders, newOrder] };
   }),
 
-  updateOrder: (orderId, updates) => set((state) => {
-    // Find which list the order is in and update it
-    return {
-      pendingOrders: state.pendingOrders.map(o => o.orderId === orderId ? { ...o, ...updates } : o),
-      acceptedOrders: state.acceptedOrders.map(o => o.orderId === orderId ? { ...o, ...updates } : o),
-      readyOrders: state.readyOrders.map(o => o.orderId === orderId ? { ...o, ...updates } : o),
-    };
-  }),
+  updateOrder: (orderId, updates) => set((state) => ({
+    pendingOrders: state.pendingOrders.map(o => o.orderId === orderId ? { ...o, ...updates } : o),
+    acceptedOrders: state.acceptedOrders.map(o => o.orderId === orderId ? { ...o, ...updates } : o),
+    readyOrders: state.readyOrders.map(o => o.orderId === orderId ? { ...o, ...updates } : o),
+  })),
 
   moveToAccepted: (orderId, preparationTime) => set((state) => {
     const orderIndex = state.pendingOrders.findIndex(o => o.orderId === orderId);
-    if (orderIndex === -1) return state; // Order not found in pending
+    if (orderIndex === -1) return state; 
     
+    const now = new Date().toISOString(); // UTC with Z — reliable reference
+    sessionStorage.setItem(`order_${orderId}_acceptedAt`, now); // survives page reload
+
     const order = state.pendingOrders[orderIndex];
-    const acceptedOrder = { 
+    const acceptedOrder: Order = { 
       ...order, 
-      status: "ACCEPTED",
+      state: "ACCEPTED",
       preparationTime,
-      acceptedAt: new Date().toISOString()
+      acceptedDate: now
     };
     
     return {
@@ -95,13 +98,16 @@ export const useDashboardStore = create<DashboardState>((set) => ({
 
   moveToReady: (orderId) => set((state) => {
     const orderIndex = state.acceptedOrders.findIndex(o => o.orderId === orderId);
-    if (orderIndex === -1) return state; // Order not found in accepted
+    if (orderIndex === -1) return state; 
     
+    const now = new Date().toISOString(); // UTC with Z — reliable reference
+    sessionStorage.setItem(`order_${orderId}_readyAt`, now); // survives page reload
+
     const order = state.acceptedOrders[orderIndex];
-    const readyOrder = { 
+    const readyOrder: Order = { 
       ...order, 
-      status: "READY_FOR_PICKUP",
-      readyAt: new Date().toISOString()
+      state: "READY_FOR_PICKUP",
+      readyDate: now
     };
     
     return {
