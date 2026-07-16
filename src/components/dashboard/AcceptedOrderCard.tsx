@@ -14,7 +14,7 @@ interface AcceptedOrderCardProps {
 export const AcceptedOrderCard = ({ order, sequence, onViewDetails }: AcceptedOrderCardProps) => {
   const prepTime = order.preparationTime || 15;
 
-  
+
   const { displayTime } = useOrderTimer(order.acceptedDate || order.creationTime, "DOWN", order.preparationTime);
 
   const { moveToReady } = useDashboardStore();
@@ -80,12 +80,34 @@ export const AcceptedOrderCard = ({ order, sequence, onViewDetails }: AcceptedOr
         </ul>
       </div>
 
+      {/* Rider Info */}
+      {(order.deliveryPartnerDetails || order.assignedPartner) && (
+        <div className="bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-3 mb-4 border border-slate-200 dark:border-zinc-800/80 flex items-center justify-between">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-blue-600 dark:text-blue-500 uppercase flex items-center gap-1">
+              🛵 Rider Details
+            </span>
+            <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 mt-1">
+              🙎🏻{order.deliveryPartnerDetails?.name || "Waiting for Rider"}
+            </span>
+            <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 mt-1">
+              📞 {order.deliveryPartnerDetails?.mobileNumber || "--"}
+            </span>
+          </div>
+          {order.assignedPartner?.orderStatus && (
+            <span className="px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 text-[10px] font-bold uppercase tracking-wider rounded-md text-right">
+              {order.assignedPartner.orderStatus.replace(/_/g, ' ')}
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Timer & Progress */}
       <div className="flex flex-col items-center justify-center py-2 mb-4">
         <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-widest">Remaining Time</span>
 
         <span className={`text-2xl font-black tabular-nums transition-colors ${isTimeUp ? 'text-red-600 dark:text-red-500 animate-pulse' :
-            isTimeCritical ? 'text-red-500' : 'text-amber-500'
+          isTimeCritical ? 'text-red-500' : 'text-amber-500'
           }`}>
           {displayTime}
         </span>
