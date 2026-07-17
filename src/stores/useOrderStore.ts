@@ -3,10 +3,10 @@ import type { Order } from '../types/order';
 
 interface OrderState {
   incomingOrders: Order[];
+  viewedOrderIds: Set<string>;
   addOrder: (order: Order) => void;
   removeOrder: (orderId: string) => void;
   clearAll: () => void;
-  viewedOrderIds: Set<string>;
   markAsViewed: (orderId: string) => void;
 }
 

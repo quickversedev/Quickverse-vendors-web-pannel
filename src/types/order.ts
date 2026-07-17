@@ -114,6 +114,10 @@ export interface Order {
   // Nested Details
   shopDetails?: ShopDetails | null;
   deliveryPartnerDetails?: DeliveryPartnerDetails | null;
+  assignedPartner?: {
+    orderStatus?: string;
+    [key: string]: any;
+  } | null;
 }
 
 export type OrderActionEvent = Order;

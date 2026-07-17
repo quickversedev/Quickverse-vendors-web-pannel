@@ -168,7 +168,7 @@ export const IncomingOrderCard = ({ order }: { order: OrderActionEvent }) => {
       <div className="flex border-t border-slate-200 dark:border-zinc-800 pt-4 mb-5 gap-6">
         <div>
           <p className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-bold">Total Amount</p>
-          <p className="text-[#1e40af] dark:text-emerald-400 font-bold text-xl">₹{order.totalAmount}</p>
+          <p className="text-[#1e40af] dark:text-emerald-400 font-bold text-xl">₹{order.amountExcludingDeliveryFee}</p>
         </div>
         <div>
           <p className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-bold">Quantity</p>

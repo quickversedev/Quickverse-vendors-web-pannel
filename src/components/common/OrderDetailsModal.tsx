@@ -191,16 +191,16 @@ export const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) =>
                         </div>
                     </div>
 
-                    {/* Rider Section (Only shows if deliveryPartner details exist) */}
-                    {rider && (
+                    {/* Rider Section (Only shows if deliveryPartner details or assignedPartner exist) */}
+                    {(rider || order.assignedPartner) && (
                         <div className="bg-[#0f172a] rounded-xl overflow-hidden shadow-md mt-4">
                             <div className="px-4 py-3 flex items-center justify-between border-b border-slate-700/50">
                                 <div className="flex items-center gap-2">
                                     <Navigation size={14} className="text-emerald-400" />
                                     <h3 className="text-xs font-bold text-white uppercase tracking-wider">Delivery Partner</h3>
                                 </div>
-                                <span className="px-2.5 py-0.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[9px] font-bold uppercase tracking-wider rounded">
-                                    Assigned
+                                <span className="px-2.5 py-0.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[9px] font-bold uppercase tracking-wider rounded text-right">
+                                    {order.assignedPartner?.orderStatus ? order.assignedPartner.orderStatus.replace(/_/g, ' ') : "Assigned"}
                                 </span>
                             </div>
                             <div className="p-4 flex items-center justify-between">
@@ -209,13 +209,13 @@ export const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) =>
                                         <User className="text-slate-300" size={20} />
                                     </div>
                                     <div>
-                                        <h4 className="text-sm font-bold text-white">{rider.name}</h4>
-                                        <p className="text-[10px] text-slate-400 mt-0.5 font-mono">ID: {rider.id?.split('-')[0] || "—"}</p>
+                                        <h4 className="text-sm font-bold text-white">{rider?.name || "Waiting for Rider"}</h4>
+                                        <p className="text-[10px] text-slate-400 mt-0.5 font-mono">ID: {rider?.id?.split('-')[0] || "—"}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1.5 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
                                     <Phone size={12} className="text-emerald-400" />
-                                    <span className="text-xs font-semibold text-slate-200">+{rider.mobileNumber || "—"}</span>
+                                    <span className="text-xs font-semibold text-slate-200">+{rider?.mobileNumber || "—"}</span>
                                 </div>
                             </div>
                         </div>
