@@ -1,4 +1,4 @@
-import { X, MapPin, Phone, User, Store, Navigation } from "lucide-react";
+import { X, Phone, User, Store, Navigation } from "lucide-react";
 import type { OrderActionEvent } from "../../types/order";
 
 interface OrderDetailsModalProps {

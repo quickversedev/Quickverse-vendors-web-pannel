@@ -15,7 +15,7 @@ interface DashboardState {
   clearAll: () => void;
 }
 
-export const useDashboardStore = create<DashboardState>((set, get) => ({
+export const useDashboardStore = create<DashboardState>((set) => ({
   pendingOrders: [],
   acceptedOrders: [],
   readyOrders: [],
