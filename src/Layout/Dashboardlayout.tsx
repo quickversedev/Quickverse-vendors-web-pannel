@@ -80,9 +80,9 @@ const Layout = () => {
           <Navbar onHamburgerClick={() => setIsMobileSidebarOpen(true)} />
         </div>
 
-        {/* Mobile Scrollable Content — padded bottom for BottomNav */}
+        {/* Mobile Scrollable Content */}
         <div className="flex-1 overflow-y-auto bg-[#F1F5F9] dark:bg-zinc-950 pb-20">
-          <div className="p-3">
+          <div>
             <Outlet />
           </div>
         </div>

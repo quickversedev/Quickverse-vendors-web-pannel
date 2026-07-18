@@ -91,7 +91,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex flex-col h-full animate-in fade-in duration-700">
+    <div className="flex flex-col h-full animate-in fade-in duration-700 p-3">
 
       {/* ─── Page Header ─── */}
       <div className="flex items-center justify-between mb-2">

@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { OrderApiResponse } from "../../types/order";
+import OrderHistoryCard from "./OrderHistoryCard";
 
 // ─── Status badge color map ─────────────────────────────────────
 const STATUS_STYLES: Record<string, string> = {
@@ -80,63 +81,61 @@ const OrderTable = ({
 
   return (
     <div>
-      {/* ─── Table ─────────────────────────────────────────────── */}
-      <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-zinc-800">
-        <table className="w-full text-sm text-left">
-          <thead>
-            <tr className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-800/50">
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Order ID</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Timestamp</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Customer Name</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Items</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Status</th>
 
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order, idx) => (
-              <tr
-                key={order.orderId}
-                onClick={() => onOrderClick(order)}
-                className={`border-b border-slate-100 dark:border-zinc-800/60 transition-colors hover:bg-blue-50/50 dark:hover:bg-zinc-800/30 cursor-pointer ${idx % 2 === 0 ? "bg-white dark:bg-zinc-900/50" : "bg-slate-50/50 dark:bg-zinc-900/20"
-                  }`}
-              >
-                <td className="px-4 py-3 font-mono text-xs text-slate-600 dark:text-zinc-300">
-                  {order.orderId}
-                </td>
-                <td className="px-4 py-3 text-xs text-slate-500 dark:text-zinc-400 whitespace-nowrap">
-                  {formatDate(order.creationTime)}
-                </td>
-                <td
-                  className="px-4 py-3 text-xs text-slate-700 dark:text-zinc-300 max-w-[180px] truncate"
-                  title={order.customerName || "—"} > {order.customerName || "—"}
-                </td>
-                <td className="px-4 py-3 text-xs text-slate-600 dark:text-zinc-300">
-                  {order.totalItemCount} Items
-                </td>
-
-                <td className="px-4 py-3">
-                  {renderBadge(order.state, STATUS_STYLES)}
-                </td>
-                <td className="text-center px-4 py-3 text-xs font-semibold text-[#1e40af] dark:text-emerald-400">
-                  ₹{order.amountExcludingDeliveryFee}
-                </td>
-
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* ─── MOBILE: Card list (< lg) ───────────────────────────── */}
+      <div className="lg:hidden space-y-3 px-4 pb-4">
+        {orders.map((order) => (
+          <OrderHistoryCard
+            key={order.orderId}
+            order={order}
+            onViewDetails={onOrderClick}
+          />
+        ))}
       </div>
 
-      {/* ─── Pagination ────────────────────────────────────────── */}
+      {/* ─── DESKTOP: Table (≥ lg) ──────────────────────────────── */}
+      <div className="hidden lg:block">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-zinc-800">
+          <table className="w-full text-sm text-left">
+            <thead>
+              <tr className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-800/50">
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Order ID</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Timestamp</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Customer Name</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Items</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order, idx) => (
+                <tr
+                  key={order.orderId}
+                  onClick={() => onOrderClick(order)}
+                  className={`border-b border-slate-100 dark:border-zinc-800/60 transition-colors hover:bg-blue-50/50 dark:hover:bg-zinc-800/30 cursor-pointer ${
+                    idx % 2 === 0 ? "bg-white dark:bg-zinc-900/50" : "bg-slate-50/50 dark:bg-zinc-900/20"
+                  }`}
+                >
+                  <td className="px-4 py-3 font-mono text-xs text-slate-600 dark:text-zinc-300">{order.orderId}</td>
+                  <td className="px-4 py-3 text-xs text-slate-500 dark:text-zinc-400 whitespace-nowrap">{formatDate(order.creationTime)}</td>
+                  <td className="px-4 py-3 text-xs text-slate-700 dark:text-zinc-300 max-w-[180px] truncate" title={order.customerName || "—"}>{order.customerName || "—"}</td>
+                  <td className="px-4 py-3 text-xs text-slate-600 dark:text-zinc-300">{order.totalItemCount} Items</td>
+                  <td className="px-4 py-3">{renderBadge(order.state, STATUS_STYLES)}</td>
+                  <td className="text-center px-4 py-3 text-xs font-semibold text-[#1e40af] dark:text-emerald-400">₹{order.amountExcludingDeliveryFee}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ─── Pagination (shared) ─────────────────────────────────── */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 px-1">
+        <div className="flex items-center justify-between mt-4 px-4 lg:px-1">
           <p className="text-xs text-slate-500 dark:text-zinc-500">
             Showing {(currentPage - 1) * pageSize + 1}–
             {Math.min(currentPage * pageSize, totalOrders)} of {totalOrders} orders
           </p>
-
           <div className="flex items-center gap-2">
             <button
               onClick={() => onPageChange(currentPage - 1)}
@@ -145,11 +144,9 @@ const OrderTable = ({
             >
               <ChevronLeft size={16} />
             </button>
-
             <span className="text-xs text-slate-500 dark:text-zinc-400 min-w-[80px] text-center">
               Page {currentPage} of {totalPages}
             </span>
-
             <button
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
