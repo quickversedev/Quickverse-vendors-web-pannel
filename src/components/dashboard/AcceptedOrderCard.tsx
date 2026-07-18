@@ -43,8 +43,7 @@ export const AcceptedOrderCard = ({ order, sequence, onViewDetails }: AcceptedOr
       <div className="mb-3 border-b border-slate-100 dark:border-zinc-800 pb-3">
         {/* Single row: seq · orderId (truncate) · prep badge · eye */}
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400 dark:text-zinc-500 shrink-0">#{sequence}</span>
-          <span className="text-sm font-black text-slate-800 dark:text-zinc-100 truncate flex-1">{order.orderId}</span>
+          <span className="text-sm font-black text-slate-800 dark:text-zinc-100 truncate flex-1">#{order.orderId}</span>
           <span className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold rounded-md border border-amber-200 dark:border-amber-700/50">
             ⏱ prep :{prepTime}min
           </span>
@@ -60,14 +59,14 @@ export const AcceptedOrderCard = ({ order, sequence, onViewDetails }: AcceptedOr
       <div className="flex justify-between items-start mb-3">
         <div>
           <h4 className="text-sm font-bold text-slate-800 dark:text-zinc-200">{order.customerName}</h4>
-          <p className="text-[10px] text-slate-500 dark:text-zinc-500 mt-0.5">📞 {order.customerMobile}</p>
+          <p className="text-[10px] text-slate-500 dark:text-zinc-500 mt-0.5">📞 +{order.customerMobile}</p>
         </div>
         <span className="text-base font-black text-slate-900 dark:text-white">₹{order.amountExcludingDeliveryFee}</span>
       </div>
 
-      {/* Order Items */}
+      {/* Order Items — scrollable after 4 items, card layout never breaks */}
       <div className="bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-2.5 mb-4 border border-slate-100 dark:border-zinc-800/80">
-        <ul className="space-y-1.5">
+        <ul className="space-y-1.5 max-h-[116px] overflow-y-auto custom-scrollbar pr-0.5">
           {order.orderItem?.map((item, idx) => (
             <li key={idx} className="flex justify-between text-xs">
               <span className="text-slate-700 dark:text-zinc-300">
@@ -81,23 +80,35 @@ export const AcceptedOrderCard = ({ order, sequence, onViewDetails }: AcceptedOr
 
       {/* Rider Info */}
       {(order.deliveryPartnerDetails || order.assignedPartner) && (
-        <div className="bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-3 mb-4 border border-slate-200 dark:border-zinc-800/80 flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-blue-600 dark:text-blue-500 uppercase flex items-center gap-1">
-              🛵 Rider Details
+        <div className="bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-3 mb-4 border border-slate-200 dark:border-zinc-800/80">
+          {/* Header row: label + status badge on same line */}
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <span className="text-[10px] font-bold text-blue-600 dark:text-blue-500 uppercase flex items-center gap-1 shrink-0">
+               Rider Details
             </span>
-            <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 mt-1">
-              🙎🏻{order.deliveryPartnerDetails?.name || "Waiting for Rider"}
-            </span>
-            <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 mt-1">
-              📞 {order.deliveryPartnerDetails?.mobileNumber || "--"}
+            {order.assignedPartner?.orderStatus && (
+              <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 text-[9px] font-bold uppercase whitespace-nowrap rounded-md">
+                {order.assignedPartner.orderStatus.replace(/_/g, ' ')}
+              </span>
+            )}
+          </div>
+          {/* Rider name — fixed-width emoji so text aligns on every row */}
+          <div className="flex items-start gap-1.5">
+            <span className="shrink-0 w-[18px] text-center leading-tight mt-px">🙎🏻</span>
+            <span
+              className="text-xs font-semibold text-slate-800 dark:text-zinc-200 truncate"
+              title={order.deliveryPartnerDetails?.name || "Waiting for Rider"}
+            >
+              {order.deliveryPartnerDetails?.name || "Waiting for Rider"}
             </span>
           </div>
-          {order.assignedPartner?.orderStatus && (
-            <span className="px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 text-[10px] font-bold uppercase tracking-wider rounded-md text-right">
-              {order.assignedPartner.orderStatus.replace(/_/g, ' ')}
+          {/* Phone — same fixed-width emoji so it lines up with name above */}
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className="shrink-0 w-[18px] text-center text-xs">📞</span>
+            <span className="text-xs font-semibold text-slate-700 dark:text-zinc-300">
+              {order.deliveryPartnerDetails?.mobileNumber || "--"}
             </span>
-          )}
+          </div>
         </div>
       )}
 

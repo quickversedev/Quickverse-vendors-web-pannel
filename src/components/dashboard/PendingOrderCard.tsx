@@ -37,8 +37,8 @@ const { displayTime } = useOrderTimer(order.creationTime, "UP");
       {/* Top Header */}
       <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-zinc-800 pb-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400 dark:text-zinc-500">#{sequence}</span>
-          <span className="text-sm font-black text-slate-800 dark:text-zinc-100">{order.orderId}</span>
+         
+          <span className="text-sm font-black text-slate-800 dark:text-zinc-100">#{order.orderId}</span>
           <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-black uppercase rounded">New</span>
         </div>
         <div className="flex items-center gap-2">
@@ -60,16 +60,16 @@ const { displayTime } = useOrderTimer(order.creationTime, "UP");
         <span className="text-base font-black text-slate-900 dark:text-white">₹{order.amountExcludingDeliveryFee}</span>
       </div>
 
-      {/* Order Items */}
+      {/* Order Items — scrollable after 4 items, card layout never breaks */}
       <div className="bg-slate-50 dark:bg-zinc-950/50 rounded-lg p-2.5 mb-4 border border-slate-100 dark:border-zinc-800/80">
-        <ul className="space-y-1.5">
+        <ul className="space-y-1.5 max-h-[116px] overflow-y-auto custom-scrollbar pr-0.5">
           {order.orderItem?.map((item, idx) => (
             <li key={idx} className="flex justify-between text-xs">
               <span className="text-slate-700 dark:text-zinc-300">
                 <span className="font-bold text-slate-500 dark:text-zinc-500 mr-2">{item.itemCount}x</span>
                 {item.name}
               </span>
-              <span className="font-bold text-slate-600 dark:text-zinc-400">
+              <span className="font-bold text-slate-600 dark:text-zinc-400 shrink-0 ml-2">
                 ₹{item.itemPrice ? item.itemPrice * item.itemCount : "--"}
               </span>
             </li>

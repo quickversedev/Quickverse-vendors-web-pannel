@@ -1,4 +1,5 @@
-import { X, MapPin, Phone, User, Store, Navigation } from "lucide-react";
+import { useRef } from "react";
+import { X, Phone, User, Store, Navigation } from "lucide-react";
 import type { OrderActionEvent } from "../../types/order";
 
 interface OrderDetailsModalProps {
@@ -72,6 +73,20 @@ const formatDateTime = (timestamp: string | number | undefined) => {
 };
 
 export const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) => {
+    // ─── Swipe-down-to-close (mobile bottom sheet) ───
+    const touchStartY = useRef<number | null>(null);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (touchStartY.current === null) return;
+        const swipedDown = e.changedTouches[0].clientY - touchStartY.current;
+        if (swipedDown > 80) onClose(); // 80px threshold feels natural
+        touchStartY.current = null;
+    };
+
     // ─── FINAL Data Extraction Engine ───
     const orderId = order.orderId || "N/A";
     const status = order.state || "NEW";
@@ -107,12 +122,12 @@ export const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) =>
                 className="
                     relative w-full bg-[#f8fafc] dark:bg-zinc-900 shadow-2xl flex flex-col overflow-hidden
                     animate-in fade-in duration-200
-                    /* Mobile styles */
                     rounded-t-3xl max-h-[92vh] slide-in-from-bottom-4
-                    /* Desktop overrides */
                     lg:rounded-2xl lg:max-w-2xl lg:max-h-[90vh] lg:mx-4 lg:zoom-in-95
                 "
                 onClick={(e) => e.stopPropagation()}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
             >
                 {/* ─── Mobile drag handle ─── */}
                 <div className="lg:hidden flex justify-center pt-3 pb-1 shrink-0">
