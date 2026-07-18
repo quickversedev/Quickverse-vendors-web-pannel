@@ -39,19 +39,18 @@ export const AcceptedOrderCard = ({ order, sequence, onViewDetails }: AcceptedOr
     <div className={`bg-white dark:bg-zinc-900 border rounded-xl p-4 shadow-sm relative hover:shadow-md transition-shadow ${isTimeUp ? "border-red-500 dark:border-red-500/50" : "border-amber-200 dark:border-amber-900/50"
       }`}>
 
-      {/* Top Header */}
-      <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-zinc-800 pb-3">
+      {/* Top Header — single row */}
+      <div className="mb-3 border-b border-slate-100 dark:border-zinc-800 pb-3">
+        {/* Single row: seq · orderId (truncate) · prep badge · eye */}
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400 dark:text-zinc-500">#{sequence}</span>
-          <span className="text-sm font-black text-slate-800 dark:text-zinc-100">{order.orderId}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold uppercase rounded-md border border-amber-200 dark:border-amber-700/50">
-            Prep Time: {prepTime} min
+          <span className="text-xs font-bold text-slate-400 dark:text-zinc-500 shrink-0">#{sequence}</span>
+          <span className="text-sm font-black text-slate-800 dark:text-zinc-100 truncate flex-1">{order.orderId}</span>
+          <span className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold rounded-md border border-amber-200 dark:border-amber-700/50">
+            ⏱ prep :{prepTime}min
           </span>
           <button
             onClick={onViewDetails}
-            className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-500 transition-colors">
+            className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-500 transition-colors shrink-0">
             <Eye size={16} />
           </button>
         </div>
