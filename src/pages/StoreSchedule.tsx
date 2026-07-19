@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { Bell, CalendarPlus, Loader2, Info, AlertCircle, CheckCircle2 } from "lucide-react";
 
 import { useGetVendorScheduleQuery } from "../apis/schedule";
@@ -64,7 +63,7 @@ export const StoreSchedulePage = () => {
   const isOfflineByClock = checkIsCurrentlyOfflineBySchedule(operatingHours);
   const isShopOnline = scheduleData?.manualOfflineOverride ? false : !isOfflineByClock;
 
-  const handleEditClick = (day: DayOfWeek) => {
+  const handleEditClick = (_day: DayOfWeek) => {
     if (!isFormOpen) toggleFormPanel();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

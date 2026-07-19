@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Edit2, Trash2, ArrowRight, ChevronUp } from "lucide-react";
 import type { OperatingHours, DayOfWeek } from "../../types/schedule";
 

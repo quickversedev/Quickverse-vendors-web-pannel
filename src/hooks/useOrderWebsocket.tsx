@@ -6,7 +6,6 @@ import SockJS from "sockjs-client";
 import { baseurl } from "../apis";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useDashboardStore } from "../stores/useDashboardStore";
-import type { OrderActionEvent } from "../types/order";
 
 // ✅ Validator for new orders
 const isValidOrder = (data: any): boolean => {
