@@ -221,12 +221,12 @@ export const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) =>
                     {/* Rider Section */}
                     {(rider || order.assignedPartner) && (
                         <div className="bg-[#0f172a] rounded-xl overflow-hidden shadow-md">
-                            <div className="px-4 py-3 flex items-center justify-between border-b border-slate-700/50">
-                                <div className="flex items-center gap-2">
-                                    <Navigation size={13} className="text-emerald-400" />
-                                    <h3 className="text-xs font-bold text-white uppercase tracking-wider">Delivery Partner</h3>
+                            <div className="px-3 lg:px-4 py-2.5 lg:py-3 flex items-center justify-between border-b border-slate-700/50 gap-2">
+                                <div className="flex items-center gap-1.5 lg:gap-2 min-w-0">
+                                    <Navigation size={13} className="text-emerald-400 shrink-0" />
+                                    <h3 className="text-[10px] lg:text-xs font-bold text-white uppercase tracking-wider truncate">Delivery Partner</h3>
                                 </div>
-                                <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[9px] font-bold uppercase tracking-wider rounded">
+                                <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[9px] font-bold uppercase tracking-wider rounded whitespace-nowrap shrink-0">
                                     {order.assignedPartner?.orderStatus
                                         ? order.assignedPartner.orderStatus.replace(/_/g, ' ')
                                         : "Assigned"}
