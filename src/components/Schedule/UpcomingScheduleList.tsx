@@ -55,7 +55,7 @@ export const UpcomingSchedulesList = ({ operatingHours, onEditClick, onDeleteCli
       {/* Header */}
       <div className="px-5 py-4 border-b border-slate-200 dark:border-zinc-800/80 bg-slate-50 dark:bg-zinc-900/40">
         <h3 className="text-[15px] font-bold text-slate-900 dark:text-zinc-100 tracking-wide">Shop Schedule Overview</h3>
-        <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium mt-0.5">Live monitoring view of active operational constraint boundaries.</p>
+       
       </div>
 
       {/* Scrollable Container (Expands inline instead of opening a modal) */}
@@ -64,31 +64,33 @@ export const UpcomingSchedulesList = ({ operatingHours, onEditClick, onDeleteCli
           const isAllDayBlock = schedule.openTime === "00:00" && schedule.closeTime === "00:00";
           
           return (
-            <div key={schedule.day} className="flex items-center justify-between py-4 group">
+            <div key={schedule.day} className="flex flex-col sm:flex-row sm:items-center justify-between py-4 gap-3 sm:gap-0 group">
               
               {/* Left Side: Day & Time Info */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                 <span className="text-sm font-semibold text-slate-800 dark:text-zinc-200">{FULL_DAY_NAMES[schedule.day]}:</span>
                 <span className="text-sm text-slate-500 dark:text-zinc-400 font-medium">
                   {isAllDayBlock 
                     ? "All Day Closure" 
-                    : `${format12Hour(schedule.openTime)} - ${format12Hour(schedule.closeTime)} (Recurring)`}
+                    : `From: ${format12Hour(schedule.openTime)} - To: ${format12Hour(schedule.closeTime)}`}
                 </span>
               </div>
 
-              {/* Right Side: Edit & Delete Actions (Premium Hover Reveal) */}
-              <div className="flex items-center gap-3 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
+              {/* Right Side: Edit & Delete Actions (Always visible on mobile, hover reveal on desktop) */}
+              <div className="flex items-center gap-2 sm:gap-3 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 w-full sm:w-auto justify-end sm:justify-start">
                 <button 
                   onClick={() => onEditClick(schedule.day)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800/50 text-slate-600 dark:text-zinc-300 hover:text-[#1e40af] dark:hover:text-emerald-400 hover:border-[#1e40af]/30 dark:hover:border-emerald-500/50 transition-all text-[11px] font-bold tracking-wide active:scale-95"
+                  className="flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800/50 text-slate-600 dark:text-zinc-300 hover:text-[#1e40af] dark:hover:text-emerald-400 hover:border-[#1e40af]/30 dark:hover:border-emerald-500/50 transition-all text-[11px] font-bold tracking-wide active:scale-95"
+                  title="Edit"
                 >
-                  <Edit2 size={12} /> Edit
+                  <Edit2 size={14} className="sm:w-3 sm:h-3" /> <span className="hidden sm:inline">Edit</span>
                 </button>
                 <button 
                   onClick={() => onDeleteClick(schedule.day)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800/50 text-slate-600 dark:text-zinc-300 hover:text-rose-500 dark:hover:text-rose-400 hover:border-rose-500/30 dark:hover:border-rose-500/50 transition-all text-[11px] font-bold tracking-wide active:scale-95"
+                  className="flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800/50 text-slate-600 dark:text-zinc-300 hover:text-rose-500 dark:hover:text-rose-400 hover:border-rose-500/30 dark:hover:border-rose-500/50 transition-all text-[11px] font-bold tracking-wide active:scale-95"
+                  title="Delete"
                 >
-                  <Trash2 size={12} /> Delete
+                  <Trash2 size={14} className="sm:w-3 sm:h-3" /> <span className="hidden sm:inline">Delete</span>
                 </button>
               </div>
 

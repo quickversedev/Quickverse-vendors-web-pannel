@@ -95,43 +95,43 @@ export const StoreSchedulePage = () => {
           </p>
         </div>
 
-        <div className="relative p-2 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 text-slate-400 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-100 transition cursor-help group shadow-sm">
-          <Bell size={18} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border border-white dark:border-zinc-900 animate-pulse" />
-        </div>
+        
       </div>
 
-      <div className="p-5 bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-700/60 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm dark:shadow-[0_8px_30px_rgba(255,255,255,0.03)]">
-        <div className="flex items-center gap-5">
-          <div className="space-y-1">
+      <div className="p-4 sm:p-5 bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-700/60 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm dark:shadow-[0_8px_30px_rgba(255,255,255,0.03)]">
+        <div className="flex flex-col gap-2 sm:gap-1.5 w-full sm:w-auto">
+          
+          {/* Row 1: Title + Toggle (Spaced between on mobile, packed left on desktop) */}
+          <div className="flex items-center justify-between sm:justify-start gap-4">
             <h3 className="text-sm font-bold text-slate-800 dark:text-zinc-200 tracking-wide">Current Shop Status</h3>
-            <p className="text-[11px] text-slate-500 dark:text-zinc-500 flex items-center gap-1.5 font-medium">
-              <Info size={12} className="text-slate-400 dark:text-zinc-600 shrink-0" />
-              Toggle to manually override schedules and force your store online/offline.
-            </p>
+            <button
+              onClick={() => handleToggleStoreStatus(isShopOnline)}
+              disabled={isToggling}
+              className={`relative flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 active:scale-95 ${
+                isToggling ? "opacity-50 cursor-not-allowed" : ""
+              } ${
+                isShopOnline 
+                  ? "bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60" 
+                  : "bg-rose-500/10 border-rose-500/30 hover:border-rose-500/60"
+              }`}
+            >
+              <div className={`w-2.5 h-2.5 rounded-full ${isShopOnline ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"}`} />
+              <span className={`text-[10px] font-bold uppercase tracking-widest pr-1 ${isShopOnline ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                {isToggling ? "Updating..." : isShopOnline ? "Online" : "Offline"}
+              </span>
+            </button>
           </div>
 
-          <button
-            onClick={() => handleToggleStoreStatus(isShopOnline)}
-            disabled={isToggling}
-            className={`relative flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 active:scale-95 ${
-              isToggling ? "opacity-50 cursor-not-allowed" : ""
-            } ${
-              isShopOnline 
-                ? "bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60" 
-                : "bg-rose-500/10 border-rose-500/30 hover:border-rose-500/60"
-            }`}
-          >
-            <div className={`w-2.5 h-2.5 rounded-full ${isShopOnline ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"}`} />
-            <span className={`text-[11px] font-bold uppercase tracking-widest pr-1 ${isShopOnline ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
-              {isToggling ? "Updating..." : isShopOnline ? "Online" : "Offline"}
-            </span>
-          </button>
+          {/* Row 2: Info Message */}
+          <p className="text-[11px] text-slate-500 dark:text-zinc-500 flex items-start sm:items-center gap-1.5 font-medium leading-snug w-full">
+            <Info size={14} className="text-slate-400 dark:text-zinc-600 shrink-0 mt-0.5 sm:mt-0" />
+           Click Toggle to manually change store status online/offline.
+          </p>
         </div>
 
         <button
           onClick={toggleFormPanel}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 active:scale-[0.98] ${
+          className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-300 active:scale-[0.98] ${
             isFormOpen
               ? "bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700"
               : "bg-[#1e40af] dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-[#1e3a8a] dark:hover:bg-white shadow-[0_0_20px_rgba(30,64,175,0.15)] dark:shadow-[0_0_20px_rgba(255,255,255,0.1)]"

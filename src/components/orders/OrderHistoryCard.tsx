@@ -47,7 +47,10 @@ const OrderHistoryCard = ({ order, onViewDetails }: OrderHistoryCardProps) => {
   const isCancelled = order.state === "CANCELLED" || order.state === "REJECTED";
 
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200/80 dark:border-zinc-800 shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.25)] p-4 active:scale-[0.99] transition-transform duration-150">
+    <div className="relative bg-gradient-to-b from-white to-slate-50/50 dark:from-[#18181b] dark:to-[#131316] rounded-2xl border border-slate-200 dark:border-zinc-800/80 border-[3px] border-b-slate-200 dark:border-b-zinc-800 shadow-[0_8px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] p-4 sm:p-5 active:scale-[0.99] transition-transform duration-150 overflow-hidden">
+      
+      {/* ── Optional: Subtle inner glow for extra 3D effect ── */}
+      <div className="absolute inset-0 rounded-2xl border border-white/60 dark:border-white/[0.02] pointer-events-none" />
 
       {/* ── Row 1: Order ID (left) + Status badge (right) ─── */}
       <div className="flex items-start justify-between gap-2 mb-1">
