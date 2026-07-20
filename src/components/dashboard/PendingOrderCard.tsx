@@ -11,7 +11,7 @@ interface PendingOrderCardProps {
 
 const PREP_TIMES = [5, 10, 15, 20, 25];
 
-export const PendingOrderCard = ({ order, sequence, onViewDetails }: PendingOrderCardProps) => {
+export const PendingOrderCard = ({ order, onViewDetails }: PendingOrderCardProps) => {
 const { displayTime } = useOrderTimer(order.creationTime, "UP");
 
   // ─── Injecting logic from our new custom hook ───

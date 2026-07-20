@@ -1,4 +1,4 @@
-import { Bell, CalendarPlus, Loader2, Info, AlertCircle, CheckCircle2 } from "lucide-react";
+import { CalendarPlus, Loader2, Info, AlertCircle, CheckCircle2 } from "lucide-react";
 
 import { useGetVendorScheduleQuery } from "../apis/schedule";
 import { useSchedule } from "../hooks/useSchedule";

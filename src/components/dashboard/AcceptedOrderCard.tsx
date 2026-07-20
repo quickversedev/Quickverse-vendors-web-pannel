@@ -11,7 +11,7 @@ interface AcceptedOrderCardProps {
   onViewDetails: () => void;
 }
 
-export const AcceptedOrderCard = ({ order, sequence, onViewDetails }: AcceptedOrderCardProps) => {
+export const AcceptedOrderCard = ({ order, onViewDetails }: AcceptedOrderCardProps) => {
   const prepTime = order.preparationTime || 15;
 
 

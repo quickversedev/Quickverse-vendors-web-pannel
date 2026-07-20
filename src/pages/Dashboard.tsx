@@ -1,4 +1,4 @@
-import { CheckCircle, FileClock, PlayCircle, RefreshCcw, Bell } from "lucide-react";
+import { CheckCircle, FileClock, PlayCircle, RefreshCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useGetVendorOrdersQuery } from "../apis/orderApi";

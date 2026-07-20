@@ -11,7 +11,7 @@ interface ReadyOrderCardProps {
   onViewDetails: () => void;
 }
 
-export const ReadyOrderCard = ({ order, sequence, onViewDetails }: ReadyOrderCardProps) => {
+export const ReadyOrderCard = ({ order, onViewDetails }: ReadyOrderCardProps) => {
   const { displayTime } = useOrderTimer(order.readyDate || order.creationTime, "UP");
   const { removeOrder } = useDashboardStore();
 
