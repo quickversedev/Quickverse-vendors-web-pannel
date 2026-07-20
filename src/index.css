@@ -43,6 +43,38 @@ body:where(.dark *) {
   animation: custom-ring 2.5s infinite ease-in-out;
 }
 
+/* ─── Mobile Safe Area (iOS notch / home indicator) ────────────── */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ─── Smooth drawer transition ──────────────────────────────────── */
+.sidebar-drawer {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Custom scrollbar (mobile thin) ───────────────────────────── */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 99px;
+}
+.dark .custom-scrollbar {
+  scrollbar-color: #3f3f46 transparent;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #3f3f46;
+}
+
 /* ─── React DatePicker Dark Theme ────────────────────────────── */
 .dark .react-datepicker {
   background-color: #18181b !important;
@@ -227,4 +259,35 @@ body:where(.dark *) {
 .react-datepicker__year-select option {
   background-color: #ffffff !important;
   color: #1e293b !important;
+}
+
+/* ─── Utility: Hide scrollbar visually but keep scroll working ─ */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE / Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;             /* Chrome / Safari */
+}
+
+/* ─── Utility: Thin custom vertical scrollbar ──────────────────── */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.dark .custom-scrollbar {
+  scrollbar-color: #3f3f46 transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #3f3f46;
 }

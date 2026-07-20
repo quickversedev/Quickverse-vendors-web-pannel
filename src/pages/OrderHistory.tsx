@@ -91,28 +91,28 @@ const handleTimeChange = (time: string) => {
 
   // ─── Render ──────────────────────────────────────────────────
   return (
-    <div className="rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 min-h-full">
+    <div className="min-h-full bg-white dark:bg-zinc-900 lg:rounded-lg lg:border lg:border-slate-200 lg:dark:border-zinc-800 lg:p-5">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between px-4 pt-4 pb-2 lg:px-0 lg:pt-0 lg:pb-0 lg:mb-5">
         <div>
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-zinc-100">Order History</h2>
-          <p className="text-sm text-slate-500 dark:text-zinc-500 mt-0.5">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-zinc-100 lg:text-xl lg:font-semibold">Order History</h2>
+          <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5">
             {orders.length} order{orders.length !== 1 ? "s" : ""} found
           </p>
         </div>
+        {/* Premium refresh button */}
         <button
           onClick={() => refetch()}
           disabled={isFetching}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-zinc-700 text-slate-500 dark:text-zinc-300 text-xs font-medium hover:bg-slate-50 dark:hover:bg-zinc-800 transition disabled:opacity-50"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-300 text-xs font-semibold hover:bg-[#1e40af]/10 hover:border-[#1e40af]/30 hover:text-[#1e40af] dark:hover:bg-blue-500/10 dark:hover:text-blue-400 transition-all duration-200 disabled:opacity-50 active:scale-95"
         >
-          <RefreshCw size={14} className={isFetching ? "animate-spin" : ""} />
+          <RefreshCw size={13} className={isFetching ? "animate-spin" : ""} />
           {isFetching ? "Refreshing..." : "Refresh"}
         </button>
       </div>
 
-    
-      
-      <div className="mb-5">
+      {/* Filters */}
+      <div className="mb-3 lg:mb-5">
         <FilterBar
           statusFilter={orderStatus.length > 0 ? orderStatus[0] : "ALL"}
           timeFilter={timeRange || "ALL"}
